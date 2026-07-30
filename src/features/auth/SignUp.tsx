@@ -90,11 +90,9 @@ export const SignUp: React.FC = () => {
     if (!validateSignup()) return;
 
     setLoading(true);
-    // Simulate API sign up
-    setTimeout(() => {
-      setLoading(false);
-      setStep('verify');
-    }, 1200);
+    // Move to verification step
+    setLoading(false);
+    setStep('verify');
   };
 
   const handleSimulateVerification = () => {
@@ -108,6 +106,7 @@ export const SignUp: React.FC = () => {
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
     
     // Save to context auth service
@@ -116,6 +115,7 @@ export const SignUp: React.FC = () => {
       const res = await signUp(
         name,
         email,
+        password,
         selectedRole,
         selectedRole === 'student' || selectedRole === 'school_admin' ? institution : undefined,
         selectedRole === 'college_admin' ? institution : undefined,
@@ -126,10 +126,9 @@ export const SignUp: React.FC = () => {
         setStep('welcome');
       } else {
         setError(res.error || 'Failed to complete registration profile');
-        setStep('welcome'); // Continue as mock for demo
       }
-    } catch (err) {
-      setStep('welcome');
+    } catch (err: any) {
+      setError(err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -207,6 +206,13 @@ export const SignUp: React.FC = () => {
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">Create Account</h2>
                   <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Start your onboarding setup</p>
                 </div>
+
+                {error && (
+                  <div className="rounded-xl bg-red-50 border border-red-100 p-3.5 flex items-center gap-2 text-xs font-semibold text-brand-red leading-relaxed">
+                    <ShieldAlert className="h-4.5 w-4.5 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
                 <form onSubmit={handleCreateAccount} className="space-y-4">
                   
@@ -478,6 +484,13 @@ export const SignUp: React.FC = () => {
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">Basic Profile Setup</h2>
                   <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Provide details to customize your diagnostics</p>
                 </div>
+
+                {error && (
+                  <div className="rounded-xl bg-red-50 border border-red-100 p-3.5 flex items-center gap-2 text-xs font-semibold text-brand-red leading-relaxed">
+                    <ShieldAlert className="h-4.5 w-4.5 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
                 <form onSubmit={handleProfileSubmit} className="space-y-4 max-h-[420px] overflow-y-auto pr-1 no-scrollbar">
                   

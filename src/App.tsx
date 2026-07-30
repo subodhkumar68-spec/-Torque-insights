@@ -10,6 +10,7 @@ import { ChatProvider } from './context/ChatContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ChatWidget } from './components/ChatWidget';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Public Landing Website Pages
 import { Home } from './features/landing/Home';
@@ -106,19 +107,19 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
 
-                {/* Dashboard Portal Routes */}
-                <Route path="/dashboard/student" element={<StudentDashboard />} />
-                <Route path="/dashboard/parent" element={<ParentDashboard />} />
-                <Route path="/dashboard/counselor" element={<CounselorDashboard />} />
-                <Route path="/dashboard/school" element={<SchoolDashboard />} />
-                <Route path="/dashboard/college" element={<CollegeDashboard />} />
-                <Route path="/dashboard/corporate" element={<CorporateDashboard />} />
-                <Route path="/dashboard/admin" element={<AdminDashboard />} />
-                <Route path="/dashboard/billing" element={<BillingDashboard />} />
-                <Route path="/dashboard/communication" element={<CommunicationHub />} />
-                <Route path="/dashboard/analytics" element={<BiDashboard />} />
-                <Route path="/dashboard/developer" element={<DeveloperMarketplace />} />
-                <Route path="/dashboard/settings" element={<SettingsCenter />} />
+                 {/* Dashboard Portal Routes */}
+                <Route path="/dashboard/student" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/parent" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/counselor" element={<ProtectedRoute><CounselorDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/school" element={<ProtectedRoute><SchoolDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/college" element={<ProtectedRoute><CollegeDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/corporate" element={<ProtectedRoute><CorporateDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/billing" element={<ProtectedRoute><BillingDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/communication" element={<ProtectedRoute><CommunicationHub /></ProtectedRoute>} />
+                <Route path="/dashboard/analytics" element={<ProtectedRoute><BiDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/developer" element={<ProtectedRoute><DeveloperMarketplace /></ProtectedRoute>} />
+                <Route path="/dashboard/settings" element={<ProtectedRoute><SettingsCenter /></ProtectedRoute>} />
                 
                 {/* Fallback redirect */}
                 <Route path="*" element={<Home />} />

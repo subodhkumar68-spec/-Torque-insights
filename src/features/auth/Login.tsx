@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 export const Login: React.FC = () => {
-  const { login } = useAuth();
+  const { login, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
   
   // Views: 'login' | 'forgot' | 'forgot_success'
@@ -64,7 +64,7 @@ export const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await login(email);
+      const res = await login(email, password);
       if (res.success) {
         const userSession = JSON.parse(localStorage.getItem('careerdna_current_user') || '{}');
         // Standard user role routing
@@ -72,31 +72,39 @@ export const Login: React.FC = () => {
       } else {
         setError(res.error || 'Invalid credentials or user does not exist');
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleForgotPassword = (e: React.FormEvent) => {
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
     if (!validateEmail(email)) return;
     
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await resetPassword(email);
+      if (res.success) {
+        setView('forgot_success');
+      } else {
+        setError(res.error || 'Failed to send reset link.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
       setLoading(false);
-      setView('forgot_success');
-    }, 1200);
+    }
   };
 
   const handleQuickLogin = async (quickEmail: string) => {
     setError(null);
     setLoading(true);
     try {
-      const res = await login(quickEmail);
+      const res = await login(quickEmail, 'password123');
       if (res.success) {
         const userSession = JSON.parse(localStorage.getItem('careerdna_current_user') || '{}');
         redirectUser(userSession.role || 'student');
@@ -268,8 +276,18 @@ export const Login: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() => alert("Connecting Google single-sign-on protocol...")}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+                    disabled={loading}
+                    onClick={async () => {
+                      setError(null);
+                      setLoading(true);
+                      try {
+                        await loginWithGoogle();
+                      } catch (err: any) {
+                        setError(err.message || 'Google authentication failed.');
+                        setLoading(false);
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer disabled:opacity-50"
                   >
                     Continue with Google
                   </button>
