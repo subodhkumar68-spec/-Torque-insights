@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-red: var(--brand-primary);       /* Torque Insights Primary Accent */
+  --color-brand-slate: var(--brand-slate);       /* Text primary colors */
+  --color-brand-light: var(--brand-light);       /* Light Grey Background Accent */
+  --color-brand-gray: var(--brand-gray);         /* Slate Gray text */
+  --color-brand-pink: var(--brand-pink);         /* Soft background accent tint */
+  --color-brand-redhover: var(--brand-primary-hover); /* Deeper hover state red */
+  
+  --color-brand-blue: #2563EB;
+  --color-brand-sky: #38BDF8;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --animate-pulse-glow: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in-up: fadeInUp 0.6s ease-out forwards;
+  --animate-draw-line: drawLine 3s ease-out infinite;
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 5px rgba(20, 184, 166, 0.4)); }
+    50% { opacity: 1; filter: drop-shadow(0 0 15px rgba(20, 184, 166, 0.8)); }
+  }
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes drawLine {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+}
+
+:root {
+  --brand-primary: #14B8A6;         /* Turquoise */
+  --brand-primary-hover: #0D9488;   /* Darker Turquoise */
+  --brand-secondary: #2563EB;       /* Royal Blue */
+  --brand-accent: #38BDF8;          /* Sky Blue */
+  
+  --brand-slate: #1E293B;           /* Dark Charcoal Text */
+  --brand-light: #F8FAFC;           /* Very Light Gray */
+  --brand-gray: #64748B;            /* Slate Gray */
+  --brand-pink: #ECFDF5;            /* Soft Turquoise light background */
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #F8FAFC;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(226, 232, 240, 0.8);
+  --shadow-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark {
+  --brand-primary: #14B8A6;         /* Turquoise */
+  --brand-primary-hover: #2DD4BF;   /* Brighter Turquoise */
+  --brand-secondary: #2563EB;       /* Royal Blue */
+  --brand-accent: #38BDF8;          /* Sky Blue */
+  
+  --brand-slate: #F8FAFC;           /* Off-White Text */
+  --brand-light: #111827;           /* Slate-900 Card Background */
+  --brand-gray: #94A3B8;            /* Gray Text */
+  --brand-pink: #1E293B;            /* Soft Dark Background Accent */
+  
+  --bg-primary: #0B1220;            /* Premium Dark BG */
+  --bg-secondary: #0F172A;          /* Slate-900 BG */
+  --text-primary: #ffffff;
+  --text-secondary: #94A3B8;
+  --card-bg: #111827;
+  --card-border: #1F2937;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+@utility glass-nav {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+@utility glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 30px var(--shadow-color);
+}
+
+@utility text-gradient {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, var(--brand-primary), #38bdf8, var(--brand-secondary));
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-gray);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-primary);
+}
