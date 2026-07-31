@@ -135,16 +135,7 @@ export const SignUp: React.FC = () => {
   };
 
   const handleFinalRedirect = () => {
-    switch (selectedRole) {
-      case 'student': navigate('/dashboard/student'); break;
-      case 'parent': navigate('/dashboard/parent'); break;
-      case 'counselor': navigate('/dashboard/counselor'); break;
-      case 'school_admin': navigate('/dashboard/school'); break;
-      case 'college_admin': navigate('/dashboard/college'); break;
-      case 'corporate_hr': navigate('/dashboard/corporate'); break;
-      case 'admin': navigate('/dashboard/admin'); break;
-      default: navigate('/');
-    }
+    navigate('/dashboard');
   };
 
   const handleMockPhotoUpload = () => {

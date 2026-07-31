@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { useAssessment } from './context/AssessmentContext';
 
 // Context Providers
 import { AuthProvider } from './context/AuthContext';
@@ -75,6 +77,59 @@ const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   );
 };
 
+// Helper component to redirect /dashboard based on role
+const DashboardRedirect: React.FC = () => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+
+  switch (user.role) {
+    case 'student': return <Navigate to="/dashboard/student" replace />;
+    case 'parent': return <Navigate to="/dashboard/parent" replace />;
+    case 'counselor': return <Navigate to="/dashboard/counselor" replace />;
+    case 'school_admin': return <Navigate to="/dashboard/school" replace />;
+    case 'college_admin': return <Navigate to="/dashboard/college" replace />;
+    case 'corporate_hr': return <Navigate to="/dashboard/corporate" replace />;
+    case 'admin': return <Navigate to="/dashboard/admin" replace />;
+    default: return <Navigate to="/dashboard/student" replace />;
+  }
+};
+
+// Helper component to start an assessment directly and redirect
+const AssessmentDirectStart: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { startAssessment } = useAssessment();
+
+  useEffect(() => {
+    if (id) {
+      let category: 'Class XI-XII' | 'BBA' | 'MBA' = 'MBA';
+      let title = 'AI Career Assessment';
+      if (id.includes('aptitude') || id.includes('learning') || id.includes('xi')) {
+        category = 'Class XI-XII';
+        title = id.includes('aptitude') ? 'High School Career Aptitude Test' : 'Cognitive Learning Style Diagnostic';
+      } else if (id.includes('employability') || id.includes('critical') || id.includes('bba')) {
+        category = 'BBA';
+        title = id.includes('employability') ? 'Corporate Talent Employability Blueprint' : 'Critical Logic & Analytical Aptitude';
+      } else {
+        category = 'MBA';
+        if (id.includes('personality')) title = '16-Personality Archetype Map';
+        else if (id.includes('leadership')) title = 'Executive Leadership Suitability Index';
+        else if (id.includes('eq')) title = 'EQ & Emotional Intelligence Diagnostics';
+        else if (id.includes('communication')) title = 'Business & Verbal Communication Audit';
+      }
+
+      startAssessment(category, title);
+      navigate('/dashboard/student');
+    }
+  }, [id, startAssessment, navigate]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-red border-t-transparent" />
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
@@ -106,6 +161,12 @@ function App() {
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
+
+                {/* Secure Redirect Routes */}
+                <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
+                <Route path="/assessment/:id" element={<ProtectedRoute><AssessmentDirectStart /></ProtectedRoute>} />
+                <Route path="/report" element={<ProtectedRoute><AIReports /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Navigate to="/dashboard/settings" replace /></ProtectedRoute>} />
 
                  {/* Dashboard Portal Routes */}
                 <Route path="/dashboard/student" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />

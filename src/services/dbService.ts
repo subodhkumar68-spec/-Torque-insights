@@ -13,6 +13,13 @@ export interface User {
   companyName?: string;
   childId?: string; // For parents
   assignedCounselorId?: string; // For students
+  plan?: string;
+  credits?: string;
+  subscription?: string;
+  status?: string;
+  reportsCount?: string;
+  aiSessionsCount?: string;
+  downloadsCount?: string;
 }
 
 export type QuestionType = 'single' | 'multiple' | 'likert' | 'ranking' | 'scenario' | 'behavioral';

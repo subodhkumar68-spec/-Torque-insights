@@ -66,9 +66,7 @@ export const Login: React.FC = () => {
     try {
       const res = await login(email, password);
       if (res.success) {
-        const userSession = JSON.parse(localStorage.getItem('careerdna_current_user') || '{}');
-        // Standard user role routing
-        redirectUser(userSession.role || 'student');
+        navigate('/dashboard');
       } else {
         setError(res.error || 'Invalid credentials or user does not exist');
       }
@@ -106,8 +104,7 @@ export const Login: React.FC = () => {
     try {
       const res = await login(quickEmail, 'password123');
       if (res.success) {
-        const userSession = JSON.parse(localStorage.getItem('careerdna_current_user') || '{}');
-        redirectUser(userSession.role || 'student');
+        navigate('/dashboard');
       } else {
         setError(res.error || 'Quick login failed');
       }

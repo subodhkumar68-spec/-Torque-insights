@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { User } from '../services/dbService';
+import { FREE_MODE } from '../config';
 
 interface AuthContextType {
   user: User | null;
@@ -37,8 +38,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       schoolName: sbUser.user_metadata?.schoolName,
       collegeName: sbUser.user_metadata?.collegeName,
       companyName: sbUser.user_metadata?.companyName,
-      avatarUrl: sbUser.user_metadata?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(sbUser.email || '')}`
+      avatarUrl: sbUser.user_metadata?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(sbUser.email || '')}`,
+      plan: FREE_MODE ? 'Premium' : sbUser.user_metadata?.plan || 'Premium',
+      credits: FREE_MODE ? 'Unlimited' : sbUser.user_metadata?.credits || 'Unlimited',
+      subscription: FREE_MODE ? 'Active' : sbUser.user_metadata?.subscription || 'Active',
+      status: FREE_MODE ? 'Active' : sbUser.user_metadata?.status || 'Active',
+      reportsCount: FREE_MODE ? 'Unlimited' : sbUser.user_metadata?.reportsCount || 'Unlimited',
+      aiSessionsCount: FREE_MODE ? 'Unlimited' : sbUser.user_metadata?.aiSessionsCount || 'Unlimited',
+      downloadsCount: FREE_MODE ? 'Unlimited' : sbUser.user_metadata?.downloadsCount || 'Unlimited'
     };
+  };
+
+  const syncSupabaseProfile = async (mappedUser: User) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', mappedUser.id)
+        .single();
+
+      if (error || !data) {
+        await supabase
+          .from('profiles')
+          .insert([{
+            id: mappedUser.id,
+            name: mappedUser.name,
+            email: mappedUser.email,
+            role: mappedUser.role,
+            plan: mappedUser.plan,
+            subscription: mappedUser.subscription,
+            credits: mappedUser.credits,
+            status: mappedUser.status
+          }]);
+      } else {
+        await supabase
+          .from('profiles')
+          .update({
+            name: mappedUser.name,
+            role: mappedUser.role,
+            plan: mappedUser.plan,
+            subscription: mappedUser.subscription,
+            credits: mappedUser.credits,
+            status: mappedUser.status
+          })
+          .eq('id', mappedUser.id);
+      }
+    } catch (err) {
+      console.warn('Supabase profiles synchronization skipped (table/RLS check):', err);
+    }
   };
 
   useEffect(() => {
@@ -49,6 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(mapped);
         if (mapped) {
           localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
+          syncSupabaseProfile(mapped);
         }
       } else {
         setUser(null);
@@ -64,6 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(mapped);
         if (mapped) {
           localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
+          syncSupabaseProfile(mapped);
         }
       } else {
         setUser(null);
