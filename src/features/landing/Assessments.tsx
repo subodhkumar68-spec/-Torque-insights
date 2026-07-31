@@ -240,16 +240,21 @@ export const Assessments: React.FC = () => {
   const recentlyViewed = assessmentsDataset.slice(4, 7);
 
   const handleStart = async (item: Assessment) => {
-    const { data: { session } } = await supabase.auth.getSession();
+    console.log('[Assessments] Starting access check for:', item.title);
+    const { data: { session }, error } = await supabase.auth.getSession();
+    console.log('[Assessments] getSession result:', { session, error });
     
     if (!session) {
+      console.warn('[Assessments] Access blocked: No valid Supabase session exists.');
       alert('Please log in or create an account to start taking the test!');
       navigate('/login');
       return;
     }
 
+    console.log('[Assessments] Access granted. Starting assessment...');
+
     if (activeSession) {
-      // If there is an unfinished test, resume it
+      console.log('[Assessments] Resuming existing assessment session:', activeSession);
       navigate('/dashboard/student');
       return;
     }

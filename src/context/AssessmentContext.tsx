@@ -28,9 +28,10 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Check if there is an unfinished session on mount or user change
   useEffect(() => {
-    if (user) {
+    const activeUser = user || JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
+    if (activeUser) {
       const sessions = dbService.getSessions();
-      const existing = sessions.find(s => s.userId === user.id && !s.submitted);
+      const existing = sessions.find(s => s.userId === activeUser.id && !s.submitted);
       if (existing) {
         // Resume session
         setActiveSession(existing);
@@ -106,7 +107,11 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const startAssessment = (category: 'Class XI-XII' | 'BBA' | 'MBA', subCategory: string) => {
-    if (!user) return;
+    const activeUser = user || JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
+    if (!activeUser) {
+      console.warn('[AssessmentContext] Cannot start assessment: No user authenticated.');
+      return;
+    }
 
     // Clear old sessions
     const pool = dbService.getQuestions();
@@ -116,7 +121,7 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const durationMs = 30 * 60 * 1000; // 30 minutes
     const newSession: AssessmentSession = {
       id: `ses-${Date.now()}`,
-      userId: user.id,
+      userId: activeUser.id,
       category,
       subCategory,
       startTime: Date.now(),
@@ -127,7 +132,7 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     const sessions = dbService.getSessions();
     // Invalidate prior unfinished ones
-    const filteredSessions = sessions.filter(s => !(s.userId === user.id && !s.submitted));
+    const filteredSessions = sessions.filter(s => !(s.userId === activeUser.id && !s.submitted));
     dbService.saveSessions([...filteredSessions, newSession]);
 
     setActiveSession(newSession);
