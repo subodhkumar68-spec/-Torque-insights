@@ -35,7 +35,7 @@ interface Assessment {
 
 export const Assessments: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { startAssessment, activeSession } = useAssessment();
 
   // Navigation / View states: 'catalog' | 'details'
@@ -239,13 +239,11 @@ export const Assessments: React.FC = () => {
   const featuredAssessments = assessmentsDataset.slice(0, 3);
   const recentlyViewed = assessmentsDataset.slice(4, 7);
 
-  const handleStart = async (item: Assessment) => {
-    console.log('[Assessments] Starting access check for:', item.title);
-    const { data: { session }, error } = await supabase.auth.getSession();
-    console.log('[Assessments] getSession result:', { session, error });
+  const handleStart = (item: Assessment) => {
+    console.log('[Assessments] Access check using AuthContext session:', session);
     
     if (!session) {
-      console.warn('[Assessments] Access blocked: No valid Supabase session exists.');
+      console.warn('[Assessments] Access blocked: No valid AuthContext session.');
       alert('Please log in or create an account to start taking the test!');
       navigate('/login');
       return;

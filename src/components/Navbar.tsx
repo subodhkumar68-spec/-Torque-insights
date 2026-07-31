@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, BrainCircuit, ArrowRight, Sun, Moon } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<'solutions' | 'assessments' | null>(null);
@@ -162,12 +164,36 @@ export const Navbar: React.FC = () => {
           >
             {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
           </button>
-          <Link
-            to="/login"
-            className="text-sm font-bold text-slate-700 hover:text-brand-red transition-all"
-          >
-            Login
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3.5">
+              <Link
+                to="/dashboard"
+                className="text-sm font-black text-slate-700 hover:text-brand-red transition-all"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={async () => { await logout(); navigate('/'); }}
+                className="text-sm font-black text-slate-500 hover:text-brand-red transition-all cursor-pointer bg-transparent border-none outline-none"
+              >
+                Logout
+              </button>
+              <div className="h-8.5 w-8.5 rounded-full overflow-hidden border-2 border-brand-red/10 shadow-sm" title={user.name}>
+                <img
+                  src={user.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.email)}`}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="text-sm font-bold text-slate-700 hover:text-brand-red transition-all"
+            >
+              Login
+            </Link>
+          )}
           <Link
             to="/contact"
             className="rounded-full bg-brand-red px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-500/10 hover:bg-brand-redhover hover:scale-[1.02] transition-all"
@@ -264,13 +290,44 @@ export const Navbar: React.FC = () => {
                 <span>Theme</span>
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               </button>
-              <Link 
-                to="/login" 
-                onClick={() => setIsOpen(false)} 
-                className="block text-center py-2 text-sm font-bold text-slate-700 hover:text-brand-red"
-              >
-                Login
-              </Link>
+              {user ? (
+                <div className="space-y-3 py-1">
+                  <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl">
+                    <div className="h-8 w-8 rounded-full overflow-hidden border border-slate-200">
+                      <img
+                        src={user.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.email)}`}
+                        alt={user.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="truncate">
+                      <p className="text-xs font-black text-slate-800 truncate">{user.name}</p>
+                      <p className="text-[9px] font-bold text-slate-400 truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="block text-center py-2 text-sm font-bold text-slate-700 hover:text-brand-red"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={async () => { setIsOpen(false); await logout(); navigate('/'); }}
+                    className="w-full text-center py-2 text-sm font-bold text-slate-500 hover:text-brand-red cursor-pointer bg-transparent border-none outline-none"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <Link 
+                  to="/login" 
+                  onClick={() => setIsOpen(false)} 
+                  className="block text-center py-2 text-sm font-bold text-slate-700 hover:text-brand-red"
+                >
+                  Login
+                </Link>
+              )}
               <Link 
                 to="/contact" 
                 onClick={() => setIsOpen(false)} 

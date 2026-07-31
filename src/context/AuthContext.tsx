@@ -106,12 +106,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let active = true;
 
     console.log('[AuthContext] Initializing session check...');
+    const isOAuthRedirect = window.location.hash.includes('access_token=') || window.location.hash.includes('id_token=');
+
     // 1. Get initial session
     supabase.auth.getSession().then(({ data: { session: sbSession } }) => {
       if (!active) return;
       console.log('[AuthContext] getSession result:', sbSession);
-      setSession(sbSession);
+      
       if (sbSession?.user) {
+        setSession(sbSession);
         const mapped = mapUser(sbSession.user);
         console.log('[AuthContext] Authenticated user loaded:', mapped);
         setUser(mapped);
@@ -119,18 +122,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
           syncSupabaseProfile(mapped);
         }
+        setLoading(false);
       } else {
-        console.log('[AuthContext] No active session found during initialization.');
-        setUser(null);
-        localStorage.removeItem('careerdna_current_user');
+        if (!isOAuthRedirect) {
+          console.log('[AuthContext] No active session found during initialization.');
+          setSession(null);
+          setUser(null);
+          localStorage.removeItem('careerdna_current_user');
+          setLoading(false);
+        } else {
+          console.log('[AuthContext] OAuth redirect hash detected. Delaying loading resolution...');
+        }
       }
-      setLoading(false);
     });
 
     // 2. Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, sbSession) => {
       if (!active) return;
       console.log(`[AuthContext] onAuthStateChange event [${event}]:`, sbSession);
+      
+      if (event === 'SIGNED_IN' && isOAuthRedirect) {
+        window.location.hash = '';
+        window.location.replace('/dashboard');
+      }
+
       setSession(sbSession);
       if (sbSession?.user) {
         const mapped = mapUser(sbSession.user);
@@ -241,7 +256,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin
+        redirectTo: `${window.location.origin}/dashboard`
       }
     });
     if (error) {
