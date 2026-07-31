@@ -106,12 +106,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let active = true;
 
     console.log('[AuthContext] Initializing session check...');
-    const isOAuthRedirect = window.location.hash.includes('access_token=') || window.location.hash.includes('id_token=');
+    
+    // Check both hash params (implicit OAuth) and query params (PKCE OAuth code/errors)
+    const isOAuthRedirect = 
+      window.location.hash.includes('access_token=') || 
+      window.location.hash.includes('id_token=') ||
+      window.location.search.includes('code=');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthError = urlParams.get('error');
+    const oauthErrorDescription = urlParams.get('error_description');
+    const oauthErrorCode = urlParams.get('error_code');
+
+    if (oauthError) {
+      console.error('[AuthContext] Supabase OAuth error redirect detected:', {
+        error: oauthError,
+        code: oauthErrorCode,
+        description: oauthErrorDescription
+      });
+    }
 
     // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session: sbSession } }) => {
+    supabase.auth.getSession().then(({ data: { session: sbSession }, error }) => {
       if (!active) return;
-      console.log('[AuthContext] getSession result:', sbSession);
+      console.log('[AuthContext] getSession result:', { session: sbSession, error });
       
       if (sbSession?.user) {
         setSession(sbSession);
@@ -131,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem('careerdna_current_user');
           setLoading(false);
         } else {
-          console.log('[AuthContext] OAuth redirect hash detected. Delaying loading resolution...');
+          console.log('[AuthContext] OAuth redirect detected (hash/search code). Delaying loading resolution...');
         }
       }
     });
@@ -142,9 +160,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log(`[AuthContext] onAuthStateChange event [${event}]:`, sbSession);
       
       if (event === 'SIGNED_IN' && isOAuthRedirect) {
-        console.log('[AuthContext] OAuth login completed. Clearing URL hash...');
+        console.log('[AuthContext] OAuth login completed. Clearing URL parameters...');
         if (window.history && window.history.replaceState) {
-          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+          window.history.replaceState(null, document.title, window.location.pathname);
         } else {
           window.location.hash = '';
         }
