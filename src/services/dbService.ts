@@ -87,6 +87,7 @@ export interface CareerDNAReport {
   assessmentName?: string;
   candidateId?: string;
   candidateName?: string;
+  summary?: string;
   email?: string;
   mobile?: string;
   school?: string;

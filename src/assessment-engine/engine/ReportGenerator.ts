@@ -17,15 +17,110 @@ export const ReportGenerator = {
       ? config.recommendedCareers.map(c => `Demonstrates strong potential for success in ${c} related tracks.`)
       : ['Analytical Problem Solving', 'Conceptual Logic Mastery'];
       
-    const weaknesses = [
-      'Focus on reviewing practical project coordination methodologies.',
-      'Refine timed structural decision speeds under pressure.'
-    ];
+    const getAssessmentSpecificContent = (id: string, title: string) => {
+      switch (id) {
+        case 'ast-aptitude':
+          return {
+            summary: `The candidate has completed the High School Career Aptitude Test. Their profile shows strong cognitive capabilities in quantitative reasoning and logical deduction. They demonstrate a high alignment with analytical and investigative career pathways.`,
+            weaknesses: [
+              'Improve speed in solving complex abstract spatial puzzles.',
+              'Review structured vocabulary definitions and reading comprehension exercises.'
+            ],
+            growthAreas: [
+              'Participate in school science fairs or math olympiads.',
+              'Join public speaking clubs to balance verbal and analytical competencies.'
+            ]
+          };
+        case 'ast-personality':
+          return {
+            summary: `The candidate has completed the Personality Mapping Diagnostic. Their profile highlights a distinct communication style, strong collaborative team energy, and a natural tendency toward empathetic and strategic decision-making.`,
+            weaknesses: [
+              'Tendency to overcommit to multiple team tasks simultaneously.',
+              'Needs to balance logical structure with immediate action plans.'
+            ],
+            growthAreas: [
+              'Set firm boundaries for project task ownership in group settings.',
+              'Practice structured journal reflections on delegation methodologies.'
+            ]
+          };
+        case 'ast-learning':
+          return {
+            summary: `The candidate has completed the Cognitive Learning Style Diagnostic. Their scores reveal a high preference for visual and kinesthetic learning channels. They process complex concepts best when utilizing diagrams, maps, and practical experiments.`,
+            weaknesses: [
+              'Difficulty retaining purely auditory lectures without visual note-taking.',
+              'Tendency to skip reading textbooks in favor of hands-on tutorials.'
+            ],
+            growthAreas: [
+              'Utilize mind-mapping and color-coded notes during self-study sessions.',
+              'Convert text paragraphs into diagrams or process flowcharts.'
+            ]
+          };
+        case 'ast-engineering':
+          return {
+            summary: `The candidate has completed the Engineering Readiness Assessment. Their performance indicates strong suitability for STEM tracks, with high marks in physics concepts, programming logic, and structural analysis.`,
+            weaknesses: [
+              'Refine speed in solving multi-variable calculus equations under time constraints.',
+              'Focus on developing documentation and technical writing skills.'
+            ],
+            growthAreas: [
+              'Enroll in hands-on robotics workshops or coding bootcamps.',
+              'Contribute to open-source software projects or structural modeling labs.'
+            ]
+          };
+        case 'ast-medical':
+          return {
+            summary: `The candidate has completed the Medical Career Fit Assessment. Their profile highlights a strong interest in anatomical sciences, clinical precision, and high emotional resilience required for healthcare careers.`,
+            weaknesses: [
+              'Needs to practice maintaining high alertness during prolonged clinical observation cycles.',
+              'Ensure systematic documentation of physiological data observations.'
+            ],
+            growthAreas: [
+              'Shadow medical professionals or volunteer in clinical/first-aid camps.',
+              'Practice stress-management biofeedback techniques for emergency simulations.'
+            ]
+          };
+        case 'ast-commerce':
+          return {
+            summary: `The candidate has completed the Commerce Career Fit Assessment. Their profile indicates high financial acumen, commercial logic, and a solid understanding of economics and tax frameworks.`,
+            weaknesses: [
+              'Improve speed in analyzing complex multi-ledger balance sheets.',
+              'Needs to keep updated with real-time global trade policies.'
+            ],
+            growthAreas: [
+              'Participate in mock stock trading tournaments and business plan competitions.',
+              'Take up introductory courses in financial modeling and corporate law.'
+            ]
+          };
+        case 'ast-management':
+          return {
+            summary: `The candidate has completed the Management Career Fit Assessment. Their diagnostics show high potential for organizational leadership, delegation control, and strategic business planning.`,
+            weaknesses: [
+              'Refine delegation strategies to avoid micro-management tendencies.',
+              'Improve structured feedback delivery methods under high-stress conditions.'
+            ],
+            growthAreas: [
+              'Take up leadership roles in college clubs or startup projects.',
+              'Study case studies on transformational leadership and corporate conflict resolution.'
+            ]
+          };
+        default:
+          return {
+            summary: `The candidate has completed the ${title} diagnostics. Their profile demonstrates high potential and suitability for growth in their chosen professional domain.`,
+            weaknesses: [
+              'Focus on reviewing practical project coordination methodologies.',
+              'Refine timed structural decision speeds under pressure.'
+            ],
+            growthAreas: [
+              'Take collaborative leadership roles in team milestones.',
+              'Practice presentation delivery drafts under micro-sessions.'
+            ]
+          };
+      }
+    };
 
-    const growthAreas = [
-      'Take collaborative leadership roles in team milestones.',
-      'Practice presentation delivery drafts under micro-sessions.'
-    ];
+    const specContent = getAssessmentSpecificContent(config.id, config.title);
+    const weaknesses = specContent.weaknesses;
+    const growthAreas = specContent.growthAreas;
 
     const careerRecommendations = config.recommendedCareers?.map((c, i) => ({
       career: c,
@@ -86,6 +181,7 @@ export const ReportGenerator = {
       assessmentName: config.title,
       candidateId: userId,
       candidateName: activeUser.name,
+      summary: specContent.summary,
       email: activeUser.email,
       mobile: activeUser.phone || activeUser.mobile || '',
       school: activeUser.schoolName || activeUser.collegeName || '',

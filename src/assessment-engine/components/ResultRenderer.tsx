@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Printer, Share2, Calendar, ArrowRight, Sparkles, Award, ShieldCheck, CheckCircle2 } from 'lucide-react';
@@ -45,6 +45,12 @@ export const ResultRenderer: React.FC = () => {
   const themeColor = config?.themeColor || '#C62828';
   const name = report?.candidateName || 'Sarah Jenkins';
   const assessmentName = report?.assessmentName || config?.title || 'High School Career Aptitude Test';
+
+  useEffect(() => {
+    if (assessmentName && name) {
+      document.title = `Torque Insights Report - ${assessmentName} - ${name}`;
+    }
+  }, [assessmentName, name]);
   
   const formattedDate = report?.submittedAt 
     ? new Date(report.submittedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
@@ -122,7 +128,7 @@ export const ResultRenderer: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                 <div className="md:col-span-7 space-y-4">
                   <p className="text-xs font-semibold text-slate-500 leading-relaxed">
-                    This report represents the verified diagnostics compiled by Torque Insights for candidate <strong className="text-slate-900">{name}</strong>. Based on responses, the candidate shows high adaptability, strong logical integration, and suitability for targeted growth pathways.
+                    {report?.summary || `This report represents the verified diagnostics compiled by Torque Insights for candidate ${name}. Based on responses, the candidate shows high adaptability, strong logical integration, and suitability for targeted growth pathways.`}
                   </p>
                   
                   {report?.scores?.mbti && (
