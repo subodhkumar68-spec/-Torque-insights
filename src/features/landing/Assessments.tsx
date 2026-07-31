@@ -35,7 +35,7 @@ interface Assessment {
 
 export const Assessments: React.FC = () => {
   const navigate = useNavigate();
-  const { user, session } = useAuth();
+  const { user, session, loading } = useAuth();
   const { startAssessment, activeSession } = useAssessment();
 
   // Navigation / View states: 'catalog' | 'details'
@@ -240,19 +240,25 @@ export const Assessments: React.FC = () => {
   const recentlyViewed = assessmentsDataset.slice(4, 7);
 
   const handleStart = (item: Assessment) => {
-    console.log('[Assessments] Access check using AuthContext session:', session);
+    console.log('[Assessments] Starting access check in handleStart...', { user, session, loading });
     
-    if (!session) {
-      console.warn('[Assessments] Access blocked: No valid AuthContext session.');
+    if (loading) {
+      console.log('[Assessments] Authentication check is loading. Bypassing check and awaiting resolution...');
+      alert('Validating your session credentials, please try again in a moment...');
+      return;
+    }
+
+    if (!user && !session) {
+      console.warn('[Assessments] Access blocked: loading is false, and user and session are null.');
       alert('Please log in or create an account to start taking the test!');
       navigate('/login');
       return;
     }
 
-    console.log('[Assessments] Access granted. Starting assessment...');
+    console.log('[Assessments] Access granted (user or session exists). Starting assessment:', item.title);
 
     if (activeSession) {
-      console.log('[Assessments] Resuming existing assessment session:', activeSession);
+      console.log('[Assessments] Resuming existing active session:', activeSession);
       navigate('/dashboard/student');
       return;
     }
