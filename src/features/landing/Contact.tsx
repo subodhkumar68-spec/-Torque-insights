@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Link } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const [name, setName] = useState('');
@@ -51,15 +51,26 @@ export const Contact: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-brand-red shrink-0 mt-0.5" />
-                <span className="text-xs md:text-sm text-slate-300">Torque Learning Towers, Block E, Connaught Place, New Delhi, 110001, India</span>
+                <span className="text-xs md:text-sm text-slate-300">Torque Learning Towers, Block E, Ahmedabad, Gujarat, India</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4.5 w-4.5 text-brand-red shrink-0" />
-                <span className="text-xs md:text-sm text-slate-300">+91 98765 43210</span>
+                <span className="text-xs md:text-sm text-slate-300">+91 98244 13735</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4.5 w-4.5 text-brand-red shrink-0" />
                 <span className="text-xs md:text-sm text-slate-300">support@careerdna.ai</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link className="h-4.5 w-4.5 text-brand-red shrink-0" />
+                <a 
+                  href="https://www.linkedin.com/in/subodh-kumar-1a91822/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-xs md:text-sm text-slate-300 hover:text-brand-red transition-colors"
+                >
+                  LinkedIn Profile
+                </a>
               </div>
             </div>
 
