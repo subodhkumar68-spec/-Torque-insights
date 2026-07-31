@@ -117,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const oauthError = urlParams.get('error');
     const oauthErrorDescription = urlParams.get('error_description');
     const oauthErrorCode = urlParams.get('error_code');
+    const code = urlParams.get('code');
 
     if (oauthError) {
       console.error('[AuthContext] Supabase OAuth error redirect detected:', {
@@ -129,7 +130,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 1. Get initial session
     supabase.auth.getSession().then(({ data: { session: sbSession }, error }) => {
       if (!active) return;
-      console.log('[AuthContext] getSession result:', { session: sbSession, error });
+      console.log('[AuthContext] getSession full result:', {
+        session: sbSession,
+        error: error ? {
+          ...error,
+          message: error.message,
+          status: error.status,
+          name: error.name,
+          stack: error.stack
+        } : null
+      });
       
       if (sbSession?.user) {
         setSession(sbSession);
@@ -142,7 +152,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         setLoading(false);
       } else {
-        if (!isOAuthRedirect) {
+        // If code is in URL and no session exists, manually exchange the code for session to capture full details
+        if (code) {
+          console.log('[AuthContext] Exchanging OAuth authorization code manually...', code);
+          supabase.auth.exchangeCodeForSession(code).then(({ data, error: exError }) => {
+            console.log('[AuthContext] exchangeCodeForSession full response:', {
+              data,
+              session: data?.session,
+              user: data?.user,
+              error: exError ? {
+                ...exError,
+                message: exError.message,
+                status: exError.status,
+                name: exError.name,
+                stack: exError.stack
+              } : null
+            });
+            
+            if (data?.session) {
+              setSession(data.session);
+              const mapped = mapUser(data.session.user);
+              setUser(mapped);
+              if (mapped) {
+                localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
+                syncSupabaseProfile(mapped);
+              }
+            }
+            setLoading(false);
+          }).catch(err => {
+            console.error('[AuthContext] exchangeCodeForSession throw exception:', err);
+            setLoading(false);
+          });
+        } else if (!isOAuthRedirect) {
           console.log('[AuthContext] No active session found during initialization.');
           setSession(null);
           setUser(null);
