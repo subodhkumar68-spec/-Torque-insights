@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+import studentAssessment from '../../assets/student_assessment.jpg';
+import studentCollaboration from '../../assets/student_collaboration.jpg';
+import studentGraduate from '../../assets/student_graduate.jpg';
 import { 
   Sparkles, BrainCircuit, GraduationCap, ClipboardCheck, ArrowRight, 
   Star, ChevronDown, Check, Building, BookOpen, Key, Users, 
@@ -315,7 +318,7 @@ export const Home: React.FC = () => {
             <div className="snap-center shrink-0 w-[85vw] sm:w-[70vw] md:w-auto md:shrink group relative overflow-hidden rounded-3xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/80 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-left">
               <div className="relative aspect-video overflow-hidden">
                 <img 
-                  src="/src/assets/student_assessment.jpg" 
+                  src={studentAssessment} 
                   alt="AI Career Assessment"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                 />
@@ -336,7 +339,7 @@ export const Home: React.FC = () => {
             <div className="snap-center shrink-0 w-[85vw] sm:w-[70vw] md:w-auto md:shrink group relative overflow-hidden rounded-3xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/80 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-left">
               <div className="relative aspect-video overflow-hidden">
                 <img 
-                  src="/src/assets/student_collaboration.jpg" 
+                  src={studentCollaboration} 
                   alt="Future Ready"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                 />
@@ -357,7 +360,7 @@ export const Home: React.FC = () => {
             <div className="snap-center shrink-0 w-[85vw] sm:w-[70vw] md:w-auto md:shrink md:col-span-2 lg:col-span-1 group relative overflow-hidden rounded-3xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/80 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-left">
               <div className="relative aspect-video overflow-hidden">
                 <img 
-                  src="/src/assets/student_graduate.jpg" 
+                  src={studentGraduate} 
                   alt="Career Intelligence"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                 />
