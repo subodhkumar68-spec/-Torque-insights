@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,8 +10,14 @@ import {
 import { User as UserType } from '../../services/dbService';
 
 export const SignUp: React.FC = () => {
-  const { signUp } = useAuth();
+  const { signUp, session } = useAuth();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (session) {
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
 
   // Wizard state: 'signup' | 'verify' | 'role' | 'profile' | 'welcome'
   const [step, setStep] = useState<'signup' | 'verify' | 'role' | 'profile' | 'welcome'>('signup');

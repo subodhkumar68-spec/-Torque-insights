@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,8 +8,14 @@ import {
 } from 'lucide-react';
 
 export const Login: React.FC = () => {
-  const { login, loginWithGoogle, resetPassword } = useAuth();
+  const { login, loginWithGoogle, resetPassword, session } = useAuth();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (session) {
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
   
   // Views: 'login' | 'forgot' | 'forgot_success'
   const [view, setView] = useState<'login' | 'forgot' | 'forgot_success'>('login');
