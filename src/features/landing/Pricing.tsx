@@ -88,13 +88,14 @@ export const Pricing: React.FC = () => {
     }
 
     if (!user) {
-      alert('Please register or log in first to purchase an assessment package!');
+      alert('Please register or log in first to activate your assessment package!');
       navigate('/login');
       return;
     }
 
-    setSelectedPlan({ planName: plan.name, price: plan.price });
-    setIsPayModalOpen(true);
+    // Direct activation (free of charge)
+    alert(`Plan "${plan.name}" activated successfully (Free Promotion)!`);
+    navigate('/assessments');
   };
 
   const handlePaymentSuccess = (txId: string) => {

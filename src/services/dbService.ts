@@ -246,8 +246,14 @@ export const dbService = {
   getUsers: (): User[] => loadData<User[]>('users', SEED_USERS),
   saveUsers: (users: User[]) => saveData<User[]>('users', users),
   
-  // Questions
-  getQuestions: (): Question[] => loadData<Question[]>('questions', SEED_QUESTIONS),
+  getQuestions: (): Question[] => {
+    const list = loadData<Question[]>('questions', SEED_QUESTIONS);
+    if (!list || list.length === 0) {
+      saveData<Question[]>('questions', SEED_QUESTIONS);
+      return SEED_QUESTIONS;
+    }
+    return list;
+  },
   saveQuestions: (questions: Question[]) => saveData<Question[]>('questions', questions),
 
   // Assessments Sessions
