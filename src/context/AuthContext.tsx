@@ -142,8 +142,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log(`[AuthContext] onAuthStateChange event [${event}]:`, sbSession);
       
       if (event === 'SIGNED_IN' && isOAuthRedirect) {
-        window.location.hash = '';
-        window.location.replace('/dashboard');
+        console.log('[AuthContext] OAuth login completed. Clearing URL hash...');
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        } else {
+          window.location.hash = '';
+        }
+      }
+
+      // If it's an OAuth redirect and we haven't signed in yet, ignore other startup events that would set loading to false
+      if (isOAuthRedirect && event !== 'SIGNED_IN' && !sbSession) {
+        console.log(`[AuthContext] OAuth redirect in progress. Ignoring auth event [${event}]...`);
+        return;
       }
 
       setSession(sbSession);
