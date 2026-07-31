@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAssessment } from '../../context/AssessmentContext';
+import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BrainCircuit, Search, Filter, ArrowRight, Clock, Award, Star, 
@@ -238,8 +239,10 @@ export const Assessments: React.FC = () => {
   const featuredAssessments = assessmentsDataset.slice(0, 3);
   const recentlyViewed = assessmentsDataset.slice(4, 7);
 
-  const handleStart = (item: Assessment) => {
-    if (!user) {
+  const handleStart = async (item: Assessment) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
       alert('Please log in or create an account to start taking the test!');
       navigate('/login');
       return;

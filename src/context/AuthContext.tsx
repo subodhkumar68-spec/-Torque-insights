@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { User } from '../services/dbService';
 import { FREE_MODE } from '../config';
 
 interface AuthContextType {
   user: User | null;
+  session: Session | null;
   loading: boolean;
   login: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (
@@ -16,15 +18,27 @@ interface AuthContextType {
     collegeName?: string,
     companyName?: string
   ) => Promise<{ success: boolean; error?: string }>;
+  signup: (
+    name: string,
+    email: string,
+    password?: string,
+    role?: User['role'],
+    schoolName?: string,
+    collegeName?: string,
+    companyName?: string
+  ) => Promise<{ success: boolean; error?: string }>;
   loginWithGoogle: () => Promise<void>;
+  googleLogin: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (updatedUser: User) => void;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -89,10 +103,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    let active = true;
+
     // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        const mapped = mapUser(session.user);
+    supabase.auth.getSession().then(({ data: { session: sbSession } }) => {
+      if (!active) return;
+      setSession(sbSession);
+      if (sbSession?.user) {
+        const mapped = mapUser(sbSession.user);
         setUser(mapped);
         if (mapped) {
           localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
@@ -106,9 +124,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // 2. Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        const mapped = mapUser(session.user);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, sbSession) => {
+      if (!active) return;
+      setSession(sbSession);
+      if (sbSession?.user) {
+        const mapped = mapUser(sbSession.user);
         setUser(mapped);
         if (mapped) {
           localStorage.setItem('careerdna_current_user', JSON.stringify(mapped));
@@ -122,6 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
+      active = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -244,6 +265,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     await supabase.auth.signOut();
     setUser(null);
+    setSession(null);
     localStorage.removeItem('careerdna_current_user');
     setLoading(false);
   };
@@ -253,8 +275,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('careerdna_current_user', JSON.stringify(updatedUser));
   };
 
+  const isAuthenticated = !!session;
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signUp, loginWithGoogle, resetPassword, logout, updateProfile }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        login,
+        signUp,
+        signup: signUp,
+        loginWithGoogle,
+        googleLogin: loginWithGoogle,
+        resetPassword,
+        logout,
+        updateProfile,
+        isAuthenticated,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
