@@ -4,7 +4,7 @@ export const aiService = {
   // Analyzes assessment session answers and generates a CareerDNAReport
   generateReport: (
     userId: string,
-    category: 'Class XI-XII' | 'BBA' | 'MBA',
+    category: string,
     subCategory: string,
     answers: Record<string, any>
   ): CareerDNAReport => {
@@ -92,116 +92,154 @@ export const aiService = {
     let skillGapAnalysis: Array<{ skill: string; current: number; required: number }> = [];
     let learningRoadmap: Array<{ phase: string; title: string; duration: string; details: string[] }> = [];
 
-    // Customize outputs based on primary interest and target category
-    if (primaryInterest === 'Investigative') {
+    // Switch on subCategory (Assessment Name)
+    if (subCategory.includes('Personality') || subCategory.includes('16-Personality')) {
+      strengths = ['Introspective Thinking', 'Principled Communication', 'Strategic Focus', 'Empathetic Collaboration'];
+      weaknesses = ['Preference for Solo Tasks', 'Occasional Analysis Paralysis', 'Reluctance to Direct Teams'];
+      growthAreas = ['Assertive Delegation', 'Active Group Brainstorming', 'Short-term Goal Execution'];
+      careerRecommendations = [
+        { career: 'Software Product Manager', matchPercentage: 94, description: 'Bridge business strategy and development teams with absolute clarity.' },
+        { career: 'Strategic Management Consultant', matchPercentage: 88, description: 'Solve structural corporate bottlenecks and present board decks.' },
+        { career: 'Clinical Psychologist', matchPercentage: 85, description: 'Consult candidates and guide behavioral changes with empathy.' }
+      ];
+      suggestedDegrees = ['BA / B.Sc Psychology', 'BBA in Human Resource Management', 'MBA in Leadership & Strategy'];
+      suggestedColleges = ['Delhi University', 'TISS Mumbai', 'Symbiosis Pune'];
+      suggestedCertifications = ['MBTI Certified Practitioner', 'NLP Communication Professional'];
+      skillGapAnalysis = [
+        { skill: 'Team Delegation', current: 60, required: 90 },
+        { skill: 'Empathetic Feedback', current: 75, required: 95 },
+        { skill: 'Presentation Articulation', current: 70, required: 85 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Communication Essentials', duration: '3 Months', details: ['Study group communication frameworks', 'Practice emotional intelligence techniques'] },
+        { phase: 'Phase 2', title: 'Leadership Lab', duration: '6 Months', details: ['Organize 2 collaborative projects', 'Complete public presentation exercises'] }
+      ];
+    } else if (subCategory.includes('Learning') || subCategory.includes('Cognitive Learning') || subCategory.includes('Learning Style')) {
+      strengths = ['Visual Memory Retention', 'Diagrammatic Processing', 'Structured Reading Comprehension'];
+      weaknesses = ['Distractibility in Lecture Halls', 'Slower Auditory Recall'];
+      growthAreas = ['Active Listening Practice', 'Hands-on Kinesthetic Exercises'];
+      careerRecommendations = [
+        { career: 'Technical Instructional Designer', matchPercentage: 95, description: 'Design modern study assets and outline lesson plans.' },
+        { career: 'Visual Data Analyst', matchPercentage: 90, description: 'Format transaction logs and databases into intuitive dashboards.' },
+        { career: 'Creative Content Strategist', matchPercentage: 86, description: 'Draft visual marketing assets and design branding campaigns.' }
+      ];
+      suggestedDegrees = ['B.Des Visual Communication', 'B.Ed Educational Technology', 'B.Sc Cognitive Science'];
+      suggestedColleges = ['NID Ahmedabad', 'IIT Bombay Design Centre', 'JNU New Delhi'];
+      suggestedCertifications = ['VARK Learning Specialist', 'Instructional Design Certification'];
+      skillGapAnalysis = [
+        { skill: 'Auditory Recall', current: 55, required: 80 },
+        { skill: 'Kinesthetic Application', current: 65, required: 85 },
+        { skill: 'Visual Mind Mapping', current: 80, required: 90 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Mind Mapping & Visualization', duration: '2 Months', details: ['Convert lecture notes into color-coded charts', 'Use flashcard software for spaced repetition'] },
+        { phase: 'Phase 2', title: 'Active Recalling & Timed Quizzes', duration: '3 Months', details: ['Take timed self-assessments', 'Engage in group teaching to verify concept clarity'] }
+      ];
+    } else if (subCategory.includes('Engineering') || subCategory.includes('STEM')) {
+      strengths = ['Mathematical Modeling', 'Spatial Rotation Capacity', 'Physics Concept Application', 'Logical Acumen'];
+      weaknesses = ['Impatience with Theoretical Writing', 'Underestimating Project Management Costs'];
+      growthAreas = ['Technical Communication', 'Software Architecture Concepts'];
+      careerRecommendations = [
+        { career: 'Robotics & Automation Engineer', matchPercentage: 96, description: 'Build physical automations and code microcontroller behaviors.' },
+        { career: 'Computer Systems Architect', matchPercentage: 92, description: 'Design network pipelines, cloud infrastructures, and databases.' },
+        { career: 'Aerospace Structural Designer', matchPercentage: 88, description: 'Draft CAD schematics for aircraft fuselages and testing modules.' }
+      ];
+      suggestedDegrees = ['B.Tech Mechanical Engineering', 'B.Tech Computer Science', 'M.Tech Robotics'];
+      suggestedColleges = ['IIT Madras', 'BITS Pilani', 'IIT Kanpur', 'COEP Pune'];
+      suggestedCertifications = ['SOLIDWORKS Certified Associate', 'Python Programming Specialist'];
+      skillGapAnalysis = [
+        { skill: 'Coding Fundamentals', current: 50, required: 85 },
+        { skill: 'Spatial Mechanics', current: 75, required: 90 },
+        { skill: 'Quantitative Reasoning', current: 80, required: 95 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Mathematical Foundations', duration: '4 Months', details: ['Complete advanced calculus and physics modules', 'Code 5 basic numerical algorithms'] },
+        { phase: 'Phase 2', title: 'Applied Engineering', duration: '6 Months', details: ['Build a spatial mechanical CAD model', 'Practice BITSAT/JEE mock test series'] }
+      ];
+    } else if (subCategory.includes('Medical')) {
+      strengths = ['Organic Science Aptitude', 'Sustained Clinical Focus', 'High Empathy Quotient', 'Observational Precision'];
+      weaknesses = ['High Emotional Stress Absorption', 'Slow Decision Making in Crisis'];
+      growthAreas = ['Emergency Stress Resilience', 'Systemic Hospital Protocols'];
+      careerRecommendations = [
+        { career: 'Specialized Cardiologist', matchPercentage: 95, description: 'Diagnose structural heart defects and run clinical surgeries.' },
+        { career: 'Clinical Research Pathologist', matchPercentage: 90, description: 'Audit biopsy logs and organic tissue samples in research labs.' },
+        { career: 'Pediatric Neurologist', matchPercentage: 87, description: 'Treat young candidate neurological frameworks and sensory profiles.' }
+      ];
+      suggestedDegrees = ['MBBS / Medical Graduate', 'B.Sc Biotechnology', 'M.Sc Clinical Research'];
+      suggestedColleges = ['AIIMS New Delhi', 'CMC Vellore', 'KGMU Lucknow', 'JIPMER Puducherry'];
+      suggestedCertifications = ['First Aid & CPR Certification', 'Bioethics & Clinical Practice'];
+      skillGapAnalysis = [
+        { skill: 'Anatomy Knowledge', current: 60, required: 90 },
+        { skill: 'Clinical Empathy', current: 85, required: 95 },
+        { skill: 'Emergency Protocols', current: 50, required: 85 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Clinical Foundations', duration: '6 Months', details: ['Study human anatomy and physiology guides', 'Complete introductory organic chemistry courses'] },
+        { phase: 'Phase 2', title: 'NEP Biology & NEET Mock Training', duration: '6 Months', details: ['Practice biology test modules', 'Attend a medical camp or first-aid workshop'] }
+      ];
+    } else if (subCategory.includes('Commerce')) {
+      strengths = ['Financial Auditing Acumen', 'Microeconomics Comprehension', 'Data Tracking Rigor', 'Business Calculations'];
+      weaknesses = ['Reluctance to Take High Financial Risks', 'Prefers Rote Accounting Rules Over Ambiguous Deals'];
+      growthAreas = ['Strategic Risk Management', 'Financial Forecasting Models'];
+      careerRecommendations = [
+        { career: 'Corporate Investment Banker', matchPercentage: 93, description: 'Audit company valuations and arrange capital distributions.' },
+        { career: 'Chartered Accountant', matchPercentage: 90, description: 'Manage corporate audits, tax filings, and transaction records.' },
+        { career: 'Equity Research Strategy Lead', matchPercentage: 86, description: 'Model financial assets and evaluate stock portfolios.' }
+      ];
+      suggestedDegrees = ['Bachelor of Commerce (B.Com Hons)', 'Chartered Accountancy (CA)', 'BBA in Finance'];
+      suggestedColleges = ['SRCC Delhi', 'LSR New Delhi', 'St. Xavier\'s Kolkata', 'NMIMS Mumbai'];
+      suggestedCertifications = ['NSE Financial Markets Certification', 'Advanced MS Excel for Finance'];
+      skillGapAnalysis = [
+        { skill: 'Corporate Finance', current: 60, required: 90 },
+        { skill: 'Balance Sheet Auditing', current: 75, required: 95 },
+        { skill: 'Market Economics', current: 70, required: 85 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Accounting Foundations', duration: '4 Months', details: ['Master double-entry bookkeeping rules', 'Complete financial statements analysis courses'] },
+        { phase: 'Phase 2', title: 'Commerce Aptitude Diagnostics', duration: '6 Months', details: ['Study corporate law basics', 'Take commerce aptitude test series'] }
+      ];
+    } else if (subCategory.includes('Management') || subCategory.includes('Leadership')) {
+      strengths = ['Transformational Leadership', 'Team Synergy Building', 'Strategic Acumen', 'Persuasive Pitching'];
+      weaknesses = ['Impatience with Granular Data Entry', 'Delegating Without Clear Performance Audits'];
+      growthAreas = ['Quantitative Operations Analysis', 'Empathy-Driven Performance Review'];
+      careerRecommendations = [
+        { career: 'Brand Product Manager', matchPercentage: 94, description: 'Lead cross-functional teams to build, launch, and scale consumer products.' },
+        { career: 'Corporate Strategy Consultant', matchPercentage: 91, description: 'Deconstruct complex market issues and deliver consulting presentations.' },
+        { career: 'Entrepreneur / Business Founder', matchPercentage: 85, description: 'Coordinate seed funding rounds and pitch service architectures.' }
+      ];
+      suggestedDegrees = ['MBA in Strategy / Marketing', 'BBA in Entrepreneurship', 'PGDM in General Management'];
+      suggestedColleges = ['IIM Bangalore', 'IIM Ahmedabad', 'ISB Hyderabad', 'XLRI Jamshedpur'];
+      suggestedCertifications = ['Certified Scrum Master (CSM)', 'Google Project Management Professional'];
+      skillGapAnalysis = [
+        { skill: 'Strategic Pitching', current: 70, required: 95 },
+        { skill: 'Financial Budgeting', current: 60, required: 85 },
+        { skill: 'Agile Team Operations', current: 75, required: 90 }
+      ];
+      learningRoadmap = [
+        { phase: 'Phase 1', title: 'Business Fundamentals', duration: '3 Months', details: ['Study marketing principles and business models', 'Read 20+ strategy case studies'] },
+        { phase: 'Phase 2', title: 'Executive Leadership', duration: '6 Months', details: ['Lead an agile student group project', 'Practice mock corporate presentations'] }
+      ];
+    } else {
       strengths = ['Analytical Problem Solving', 'Scientific Reasoning', 'Deep Research Capabilities', 'Logical Integrity'];
       weaknesses = ['Over-analyzing details', 'Struggling with ambiguous team settings', 'Reluctance to delegate'];
       growthAreas = ['Public presentation skills', 'Pragmatic decision speed under tight deadlines', 'Interpersonal flexibility'];
-      
-      if (category === 'Class XI-XII') {
-        careerRecommendations = [
-          { career: 'AI / Machine Learning Engineer', matchPercentage: 96, description: 'Design complex algorithms and neural networks to power predictive intelligence.' },
-          { career: 'Bioinformatics Research Scientist', matchPercentage: 88, description: 'Apply computation and data analytics to decode genomic structures and medical records.' },
-          { career: 'Cybersecurity Analyst', matchPercentage: 85, description: 'Analyze software code and network logs to prevent digital security intrusions.' }
-        ];
-        suggestedDegrees = ['B.Tech Computer Science', 'B.Sc Data Science & AI', 'Integrated M.Tech Software Engineering'];
-        suggestedColleges = ['IIT Delhi', 'BITS Pilani', 'IISc Bangalore', 'IIIT Hyderabad'];
-        suggestedCertifications = ['Google Advanced Data Analytics', 'AWS Certified Machine Learning', 'Python Coding Associate'];
-        skillGapAnalysis = [
-          { skill: 'Algorithm Design', current: 75, required: 90 },
-          { skill: 'Statistics & Math', current: 80, required: 95 },
-          { skill: 'Systems Architecture', current: 50, required: 85 }
-        ];
-        learningRoadmap = [
-          { phase: 'Phase 1', title: 'Foundational Coding & Math', duration: '6 Months', details: ['Master Python programming structures', 'Complete advanced statistics and linear algebra', 'Build 3 basic open-source code libraries'] },
-          { phase: 'Phase 2', title: 'Core Machine Learning Core', duration: '9 Months', details: ['Study supervised and unsupervised learning models', 'Implement PyTorch and TensorFlow basics', 'Participate in Kaggle student challenges'] },
-          { phase: 'Phase 3', title: 'Applied Capstone & Internships', duration: '6 Months', details: ['Build a real-world predictive AI model', 'Pursue a research internship at an AI lab', 'Author a project documentation report'] }
-        ];
-      } else {
-        // BBA / MBA Investigative
-        careerRecommendations = [
-          { career: 'Management & Strategy Consultant', matchPercentage: 94, description: 'Deconstruct complex organizational challenges and deliver data-backed strategic solutions.' },
-          { career: 'Financial Risk Analyst', matchPercentage: 89, description: 'Use statistical models to predict market trends and manage asset exposures.' },
-          { career: 'Operations Optimizer', matchPercentage: 86, description: 'Audit supply chain logistics using data tools to eliminate workflow waste.' }
-        ];
-        suggestedDegrees = ['MBA Business Analytics', 'PGDM Strategy Consulting', 'Master of Finance'];
-        suggestedColleges = ['IIM Ahmedabad', 'ISB Hyderabad', 'IIM Bangalore', 'FMS Delhi'];
-        suggestedCertifications = ['Chartered Financial Analyst (CFA)', 'Certified Management Consultant (CMC)', 'SQL for Analytics Specialization'];
-        skillGapAnalysis = [
-          { skill: 'Financial Modeling', current: 60, required: 90 },
-          { skill: 'Strategic Frameworks', current: 70, required: 95 },
-          { skill: 'Stakeholder Negotiation', current: 65, required: 88 }
-        ];
-        learningRoadmap = [
-          { phase: 'Phase 1', title: 'Quantitative Financial Core', duration: '6 Months', details: ['Master advanced valuation and cash flow modeling', 'Study macroeconomic variables', 'Earn CFA Level 1 or equivalent certificate'] },
-          { phase: 'Phase 2', title: 'Case Analysis & Pitching', duration: '6 Months', details: ['Deconstruct 50+ Harvard case studies', 'Build dynamic consulting slide decks', 'Practice structural mock interviews'] }
-        ];
-      }
-    } else if (primaryInterest === 'Enterprising') {
-      strengths = ['High Persuasion & Influence', 'Visionary Leadership Style', 'Risk Calculation & Tolerance', 'Strategic Goal Orientation'];
-      weaknesses = ['Impatience with routine administrative details', 'Tendency to override consensus', 'Workplace burnout'];
-      growthAreas = ['Active listening and validation of peer ideas', 'Patience with compliance requirements', 'Structured data tracking'];
-
-      if (category === 'Class XI-XII') {
-        careerRecommendations = [
-          { career: 'Product Manager', matchPercentage: 95, description: 'Bridge business vision, customer experience design, and engineering output.' },
-          { career: 'Tech Entrepreneur', matchPercentage: 92, description: 'Launch and scale software or physical product startups in active market segments.' },
-          { career: 'Corporate Brand Strategist', matchPercentage: 87, description: 'Design viral campaigns and manage modern media relations for consumer brands.' }
-        ];
-        suggestedDegrees = ['BBA Business Analytics', 'B.Sc Product Management', 'B.A. Communication & Media'];
-        suggestedColleges = ['Shaheed Sukhdev College of Business Studies', 'NMIMS Mumbai', 'Ashoka University', 'Christ University'];
-        suggestedCertifications = ['Product Management First Steps', 'Professional Scrum Master (PSM I)', 'Meta Certified Digital Marketing Associate'];
-        skillGapAnalysis = [
-          { skill: 'Agile Methodologies', current: 45, required: 85 },
-          { skill: 'Product Roadmap Design', current: 50, required: 90 },
-          { skill: 'Market Validation', current: 68, required: 88 }
-        ];
-        learningRoadmap = [
-          { phase: 'Phase 1', title: 'Product & User Research', duration: '6 Months', details: ['Learn user journey mapping techniques', 'Conduct 15 customer validation interviews', 'Read core product manuals (Inspired, Hooked)'] },
-          { phase: 'Phase 2', title: 'Agile & Technical Operations', duration: '6 Months', details: ['Learn Scrum frameworks and Jira task boards', 'Coordinate with a student developer to build a mock app MVP', 'Launch landing page for conversions testing'] }
-        ];
-      } else {
-        // BBA / MBA Enterprising
-        careerRecommendations = [
-          { career: 'Venture Capital Associate', matchPercentage: 93, description: 'Screen fast-growing startups, audit business models, and negotiate funding terms.' },
-          { career: 'Chief of Staff / Executive VP', matchPercentage: 90, description: 'Drive core strategic operations, align executive departments, and scale operations.' },
-          { career: 'Investment Banker', matchPercentage: 88, description: 'Facilitate mergers & acquisitions, corporate restructuring, and major IPO capital issues.' }
-        ];
-        suggestedDegrees = ['MBA Finance & Entrepreneurship', 'PGDM Executive Leadership', 'M.Sc Investment Banking'];
-        suggestedColleges = ['IIM Ahmedabad', 'IIM Calcutta', 'ISB Hyderabad', 'XLRI Jamshedpur'];
-        suggestedCertifications = ['Project Management Professional (PMP)', 'Chartered Financial Analyst (CFA)', 'M&A Negotiation Masterclass'];
-        skillGapAnalysis = [
-          { skill: 'Corporate Valuation', current: 70, required: 95 },
-          { skill: 'Venture Capital Term Sheets', current: 55, required: 90 },
-          { skill: 'Board Presentation', current: 75, required: 95 }
-        ];
-        learningRoadmap = [
-          { phase: 'Phase 1', title: 'LBO & Merger Modeling', duration: '6 Months', details: ['Build Excel sheets for leveraged buyout structures', 'Master corporate governance regulations', 'Participate in inter-school pitch competitions'] },
-          { phase: 'Phase 2', title: 'M&A Simulations & Negotiation', duration: '6 Months', details: ['Engage in live mock negotiation tournaments', 'Draft term sheets and pitch decks for actual VC seed deals', 'Establish corporate networks'] }
-        ];
-      }
-    } else {
-      // General fallbacks (Mix of Social, Artistic, Conventional, Realistic)
-      strengths = ['High Empathy & Collaboration', 'Structured Project Execution', 'Outstanding Verbal Expression', 'Detail Rigor'];
-      weaknesses = ['Avoiding confrontation in team conflicts', 'Reluctance to take rapid financial risks', 'Perfectionism stalling progress'];
-      growthAreas = ['Direct constructive feedback delivery', 'Basic programming and data visualization', 'Assertive management presence'];
-
       careerRecommendations = [
-        { career: 'Product Designer (UI/UX)', matchPercentage: 91, description: 'Design beautiful, highly accessible digital layouts and user research models.' },
-        { career: 'Corporate HR Business Partner', matchPercentage: 88, description: 'Lead organizational talent planning, design team engagement models, and direct hiring.' },
-        { career: 'Public Policy Consultant', matchPercentage: 84, description: 'Research socio-economic trends and draft regulatory guides for government groups.' }
+        { career: 'AI / Machine Learning Engineer', matchPercentage: 96, description: 'Design complex algorithms and neural networks to power predictive intelligence.' },
+        { career: 'Bioinformatics Research Scientist', matchPercentage: 88, description: 'Apply computation and data analytics to decode genomic structures and medical records.' },
+        { career: 'Cybersecurity Analyst', matchPercentage: 85, description: 'Analyze software code and network logs to prevent digital security intrusions.' }
       ];
-      suggestedDegrees = ['B.Des Interactive Design', 'MBA Human Resource Management', 'M.A. Public Policy & Economics'];
-      suggestedColleges = ['NID Ahmedabad', 'XLRI Jamshedpur', 'Tata Institute of Social Sciences', 'TISS Mumbai'];
-      suggestedCertifications = ['Google UX Design Professional Certificate', 'SHRM-CP HR Certification', 'Data Visualization in Tableau'];
+      suggestedDegrees = ['B.Tech Computer Science', 'B.Sc Data Science & AI', 'Integrated M.Tech Software Engineering'];
+      suggestedColleges = ['IIT Delhi', 'BITS Pilani', 'IISc Bangalore', 'IIIT Hyderabad'];
+      suggestedCertifications = ['Google Advanced Data Analytics', 'AWS Certified Machine Learning', 'Python Coding Associate'];
       skillGapAnalysis = [
-        { skill: 'UX Wireframing & Prototyping', current: 60, required: 90 },
-        { skill: 'User Research Metrics', current: 65, required: 85 },
-        { skill: 'Visual Branding Design', current: 50, required: 85 }
+        { skill: 'Algorithm Design', current: 75, required: 90 },
+        { skill: 'Statistics & Math', current: 80, required: 95 },
+        { skill: 'Systems Architecture', current: 50, required: 85 }
       ];
       learningRoadmap = [
-        { phase: 'Phase 1', title: 'UX Design Essentials', duration: '6 Months', details: ['Master Figma, wireframing, and interactive design tools', 'Create 2 digital portfolio case studies', 'Complete foundational design courses'] },
-        { phase: 'Phase 2', title: 'Advanced User Prototyping', duration: '6 Months', details: ['Conduct remote usability tests for web pages', 'Build complete interactive design libraries', 'Collaborate with developers to verify CSS compliance'] }
+        { phase: 'Phase 1', title: 'Foundational Coding & Math', duration: '6 Months', details: ['Master Python programming structures', 'Complete advanced statistics and linear algebra', 'Build 3 basic open-source code libraries'] },
+        { phase: 'Phase 2', title: 'Core Machine Learning Core', duration: '9 Months', details: ['Study supervised and unsupervised learning models', 'Implement PyTorch and TensorFlow basics', 'Participate in Kaggle student challenges'] },
+        { phase: 'Phase 3', title: 'Applied Capstone & Internships', duration: '6 Months', details: ['Build a real-world predictive AI model', 'Pursue a research internship at an AI lab', 'Author a project documentation report'] }
       ];
     }
 

@@ -1,5 +1,6 @@
 // Stateful Mock Database Service using LocalStorage
 // Provides CRUD simulations for CareerDNA AI platform
+import { SEED_QUESTIONS_EXPANDED } from './assessmentQuestions';
 
 export interface User {
   id: string;
@@ -32,7 +33,7 @@ export interface QuestionOption {
 
 export interface Question {
   id: string;
-  category: 'Class XI-XII' | 'BBA' | 'MBA';
+  category: string;
   subCategory: string; // e.g. "Career Interest", "Leadership", "Decision Making"
   type: QuestionType;
   prompt: string;
@@ -44,7 +45,7 @@ export interface Question {
 export interface AssessmentSession {
   id: string;
   userId: string;
-  category: 'Class XI-XII' | 'BBA' | 'MBA';
+  category: string;
   subCategory: string;
   startTime: number;
   durationMs: number;
@@ -57,7 +58,7 @@ export interface AssessmentSession {
 export interface CareerDNAReport {
   id: string;
   userId: string;
-  category: 'Class XI-XII' | 'BBA' | 'MBA';
+  category: string;
   subCategory: string;
   submittedAt: number;
   // Compiled scores
@@ -80,6 +81,21 @@ export interface CareerDNAReport {
   suggestedColleges: string[];
   skillGapAnalysis: Array<{ skill: string; current: number; required: number }>;
   learningRoadmap: Array<{ phase: string; title: string; duration: string; details: string[] }>;
+  
+  // Enterprise properties
+  assessmentId?: string;
+  assessmentName?: string;
+  candidateId?: string;
+  candidateName?: string;
+  email?: string;
+  mobile?: string;
+  school?: string;
+  class?: string;
+  city?: string;
+  answers?: Record<string, any>;
+  createdAt?: number;
+  report?: any;
+  pdf?: string;
 }
 
 export interface CounselingSession {
@@ -254,10 +270,10 @@ export const dbService = {
   saveUsers: (users: User[]) => saveData<User[]>('users', users),
   
   getQuestions: (): Question[] => {
-    const list = loadData<Question[]>('questions', SEED_QUESTIONS);
+    const list = loadData<Question[]>('questions', SEED_QUESTIONS_EXPANDED);
     if (!list || list.length === 0) {
-      saveData<Question[]>('questions', SEED_QUESTIONS);
-      return SEED_QUESTIONS;
+      saveData<Question[]>('questions', SEED_QUESTIONS_EXPANDED);
+      return SEED_QUESTIONS_EXPANDED;
     }
     return list;
   },

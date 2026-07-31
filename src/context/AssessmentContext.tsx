@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { dbService, Question, AssessmentSession, CareerDNAReport } from '../services/dbService';
-import { aiService } from '../services/aiService';
+import { AssessmentRegistry } from '../assessment-engine/engine/AssessmentRegistry';
+import { QuestionLoader } from '../assessment-engine/engine/QuestionLoader';
+import { ReportGenerator } from '../assessment-engine/engine/ReportGenerator';
 import { useAuth } from './AuthContext';
 
 interface AssessmentContextType {
@@ -8,7 +10,7 @@ interface AssessmentContextType {
   questions: Question[];
   currentQuestionIndex: number;
   timeLeft: number; // in seconds
-  startAssessment: (category: 'Class XI-XII' | 'BBA' | 'MBA', subCategory: string) => void;
+  startAssessment: (category: string, subCategory?: string) => void;
   saveAnswer: (questionId: string, value: any) => void;
   submitAssessment: () => CareerDNAReport | null;
   setCurrentQuestionIndex: (index: number) => void;
@@ -92,7 +94,7 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     testQuestions.forEach(q => {
       if (!finalAnswers[q.id]) {
         // Seed default answers based on types
-        if (q.type === 'likert') finalAnswers[q.id] = '3'; // neutral
+        if (q.type === 'likert') finalAnswers[q.id] = '3'; // default neutral
         else if (q.type === 'single' && q.options) finalAnswers[q.id] = q.options[0].value;
         else if (q.type === 'multiple' && q.options) finalAnswers[q.id] = [q.options[0].value];
         else if (q.type === 'ranking' && q.options) finalAnswers[q.id] = q.options.map(o => o.value);
@@ -101,30 +103,38 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     });
 
-    aiService.generateReport(activeUser.id, session.category, session.subCategory, finalAnswers);
+    const config = AssessmentRegistry.getById(session.subCategory);
+    if (config) {
+      ReportGenerator.generateReport(activeUser.id, config, finalAnswers);
+    }
     setActiveSession(null);
     setQuestions([]);
     setTimeLeft(0);
   };
 
-  const startAssessment = (category: 'Class XI-XII' | 'BBA' | 'MBA', subCategory: string) => {
+  const startAssessment = (category: string, subCategory?: string) => {
     const activeUser = user || JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
     if (!activeUser) {
       console.warn('[AssessmentContext] Cannot start assessment: No user authenticated.');
       return;
     }
 
-    // Clear old sessions
-    const pool = dbService.getQuestions();
-    const filtered = pool.filter(q => q.category === category);
-    setQuestions(filtered);
+    // Resolve configuration object
+    const config = AssessmentRegistry.getById(category) || AssessmentRegistry.getById(subCategory || '');
+    if (!config) {
+      console.warn(`[AssessmentContext] Configuration not resolved for: ${category}`);
+      return;
+    }
 
-    const durationMs = 30 * 60 * 1000; // 30 minutes
+    const loadedQuestions = QuestionLoader.loadQuestions(config);
+    setQuestions(loadedQuestions as any);
+
+    const durationMs = (config.duration || 30) * 60 * 1000;
     const newSession: AssessmentSession = {
       id: `ses-${Date.now()}`,
       userId: activeUser.id,
-      category,
-      subCategory,
+      category: config.category,
+      subCategory: config.title,
       startTime: Date.now(),
       durationMs,
       answers: {},
@@ -137,7 +147,7 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     dbService.saveSessions([...filteredSessions, newSession]);
 
     setActiveSession(newSession);
-    setTimeLeft(30 * 60);
+    setTimeLeft((config.duration || 30) * 60);
     setCurrentQuestionIndex(0);
   };
 
@@ -169,10 +179,15 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     if (timerRef.current) clearInterval(timerRef.current);
 
-    const report = aiService.generateReport(
+    const config = AssessmentRegistry.getById(activeSession.subCategory);
+    if (!config) {
+      console.warn(`[AssessmentContext] Failed to find config on submit for: ${activeSession.subCategory}`);
+      return null;
+    }
+
+    const report = ReportGenerator.generateReport(
       activeUser.id,
-      activeSession.category,
-      activeSession.subCategory,
+      config,
       activeSession.answers
     );
 

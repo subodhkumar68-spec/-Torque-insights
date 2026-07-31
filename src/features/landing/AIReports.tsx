@@ -11,6 +11,7 @@ import {
   Shield, Briefcase, GraduationCap, BookOpen, AlertCircle, Send, Copy, Mail, Printer,
   X, Check
 } from 'lucide-react';
+import { dbService } from '../../services/dbService';
 
 export const AIReports: React.FC = () => {
   const navigate = useNavigate();
@@ -19,29 +20,47 @@ export const AIReports: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [showEmailDialog, setShowEmailDialog] = useState(false);
 
-  // Mock Candidate Details
+  // Dynamic Lookup of latest/selected report
+  const urlParams = new URLSearchParams(window.location.search);
+  const reportId = urlParams.get('id');
+  const reports = dbService.getReports();
+  const latestReport = reportId ? reports.find(r => r.id === reportId) : (reports.length > 0 ? reports[reports.length - 1] : null);
+
+  // Mock/Dynamic Candidate Details
   const activeUser = JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
   const candidateName = activeUser?.name || "Sarah Jenkins";
 
   const reportMetadata = {
     name: candidateName,
-    id: "REP-90A07-2026",
-    date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    status: "Verified AI Report",
-    overallScore: 92
+    id: latestReport ? latestReport.id : "REP-90A07-2026",
+    date: latestReport ? new Date(latestReport.submittedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    status: latestReport ? `Verified AI Report: ${latestReport.category}` : "Verified AI Report",
+    overallScore: latestReport ? (latestReport.scores?.criticalThinking || 92) : 92,
+    assessmentName: latestReport ? latestReport.subCategory : "High School Career Aptitude Test"
   };
 
-  // Recharts Datasets
+  // Recharts Datasets dynamically synced
+  const R = latestReport?.scores?.riasec?.R ?? 65;
+  const I = latestReport?.scores?.riasec?.I ?? 95;
+  const A = latestReport?.scores?.riasec?.A ?? 75;
+  const S = latestReport?.scores?.riasec?.S ?? 80;
+  const E = latestReport?.scores?.riasec?.E ?? 85;
+  const C = latestReport?.scores?.riasec?.C ?? 90;
+
   const personalityRadar = [
-    { subject: 'Realistic', score: 65 },
-    { subject: 'Investigative', score: 95 },
-    { subject: 'Artistic', score: 75 },
-    { subject: 'Social', score: 80 },
-    { subject: 'Enterprising', score: 85 },
-    { subject: 'Conventional', score: 90 },
+    { subject: 'Realistic', score: R },
+    { subject: 'Investigative', score: I },
+    { subject: 'Artistic', score: A },
+    { subject: 'Social', score: S },
+    { subject: 'Enterprising', score: E },
+    { subject: 'Conventional', score: C },
   ];
 
-  const skillGapData = [
+  const skillGapData = latestReport?.skillGapAnalysis ? latestReport.skillGapAnalysis.map(s => ({
+    subject: s.skill,
+    Current: s.current,
+    Target: s.required
+  })) : [
     { subject: 'Critical Thinking', Current: 85, Target: 95 },
     { subject: 'Communication', Current: 70, Target: 90 },
     { subject: 'Leadership', Current: 60, Target: 85 },
@@ -50,12 +69,12 @@ export const AIReports: React.FC = () => {
   ];
 
   const leadershipSpider = [
-    { subject: 'Teamwork', value: 85 },
-    { subject: 'Conflict Resolution', value: 75 },
-    { subject: 'Influencing', value: 80 },
-    { subject: 'Decision Making', value: 90 },
-    { subject: 'Public Speaking', value: 70 },
-    { subject: 'Negotiation', value: 78 },
+    { subject: 'Teamwork', value: latestReport?.scores?.communicationScore || 85 },
+    { subject: 'Conflict Resolution', value: latestReport?.scores?.emotionalIntelligence || 75 },
+    { subject: 'Influencing', value: latestReport?.scores?.leadershipScore || 80 },
+    { subject: 'Decision Making', value: latestReport?.scores?.decisionMaking || 90 },
+    { subject: 'Public Speaking', value: latestReport?.scores?.communicationScore ? Math.max(50, latestReport.scores.communicationScore - 10) : 70 },
+    { subject: 'Negotiation', value: latestReport?.scores?.problemSolving || 78 },
   ];
 
   const learningStylePie = [
@@ -66,7 +85,14 @@ export const AIReports: React.FC = () => {
   ];
 
   // Career Recommendations (8 records)
-  const careerRecommendations = [
+  const careerRecommendations = latestReport?.careerRecommendations ? latestReport.careerRecommendations.map(rec => ({
+    name: rec.career,
+    match: rec.matchPercentage,
+    growth: rec.matchPercentage > 90 ? 'Very High' : 'High',
+    demand: rec.matchPercentage > 90 ? 'Very High' : 'High',
+    edu: latestReport.suggestedDegrees[0] || 'Undergraduate Degree',
+    skills: latestReport.suggestedCertifications.join(', ') || 'Domain Fundamentals'
+  })) : [
     { name: 'Software Product Manager', match: 94, growth: 'High', demand: 'Very High', edu: 'B.Tech/BBA + MBA', skills: 'Agile, Roadmap, User Diagnostics' },
     { name: 'Consulting Strategy Analyst', match: 91, growth: 'Very High', demand: 'High', edu: 'Undergrad + MBA', skills: 'Analytics, Modeling, Slide deck' },
     { name: 'UX Researcher', match: 88, growth: 'High', demand: 'High', edu: 'UG Design/Psychology', skills: 'Wireframing, User audits, Persona' },
@@ -77,7 +103,12 @@ export const AIReports: React.FC = () => {
     { name: 'Business Strategy Lead', match: 77, growth: 'Medium', demand: 'High', edu: 'BBA/MBA', skills: 'Marketing metrics, Acquisition' },
   ];
 
-  const strengthsDataset = [
+  const strengthsDataset = latestReport ? latestReport.strengths.map((str, idx) => ({
+    name: str,
+    score: 90 - idx * 4,
+    desc: `Demonstrates high capability in ${str.toLowerCase()} during items assessments.`,
+    tip: latestReport.growthAreas[idx] || 'Continue practicing advanced projects in this area.'
+  })) : [
     { name: 'Critical Thinking', score: 92, desc: 'Logical evaluation of data models.', tip: 'Practice auditing complex systems logic.' },
     { name: 'Communication', score: 86, desc: 'Coordinating cross-functional messages.', tip: 'Present briefs in outline structures.' },
     { name: 'Problem Solving', score: 90, desc: 'Resolving agile product roadblocks.', tip: 'Tackle open-ended sandbox test cases.' },
@@ -85,7 +116,7 @@ export const AIReports: React.FC = () => {
   ];
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://torqueinsights.com/report/REP-90A07-2026");
+    navigator.clipboard.writeText(`https://torqueinsights.com/report/${reportMetadata.id}`);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
@@ -101,7 +132,7 @@ export const AIReports: React.FC = () => {
               {reportMetadata.status}
             </span>
             <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mt-1">
-              AI Career Intelligence Report
+              {reportMetadata.assessmentName} Diagnostics Report
             </h2>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
               Candidate: {reportMetadata.name} | ID: {reportMetadata.id} | Generated: {reportMetadata.date}
@@ -453,12 +484,17 @@ export const AIReports: React.FC = () => {
               </div>
 
               <div className="relative border-l-2 border-slate-200 ml-4 space-y-8 pb-4 text-left">
-                {[
+                {(latestReport?.learningRoadmap ? latestReport.learningRoadmap.map(r => ({
+                  step: r.phase,
+                  title: r.title,
+                  date: r.duration,
+                  desc: r.details.join('; ')
+                })) : [
                   { step: 'Phase 1', title: 'Stream & Skills Development', date: '6 Months', desc: 'Focus on advanced logic, database modeling, and agile credentials.' },
                   { step: 'Phase 2', title: 'Target Certifications', date: '1 Year', desc: 'Acquire certified Scrum Master status or product design portfolio elements.' },
                   { step: 'Phase 3', title: 'Corporate Internships', date: '1.5 Years', desc: 'Secure junior analyst placement or project coordinator projects.' },
                   { step: 'Phase 4', title: 'Dream Placement Strategy', date: '2.5 Years', desc: 'Align hiring pipelines to land Software Product Associate titles.' },
-                ].map((ph, idx) => (
+                ]).map((ph, idx) => (
                   <div key={idx} className="relative pl-6">
                     <div className="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full border-2 border-brand-red bg-white" />
                     <span className="text-[10px] font-black text-brand-red uppercase tracking-wider">{ph.step} ({ph.date})</span>

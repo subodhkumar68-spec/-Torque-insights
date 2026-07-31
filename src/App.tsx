@@ -26,6 +26,8 @@ import { Contact } from './features/landing/Contact';
 import { AssessmentPage } from './features/landing/AssessmentPage';
 
 // New Sections
+import { AssessmentLayout } from './assessment-engine/components/AssessmentLayout';
+import { ResultRenderer } from './assessment-engine/components/ResultRenderer';
 import { AIReports } from './features/landing/AIReports';
 import { Schools } from './features/landing/Schools';
 import { Colleges } from './features/landing/Colleges';
@@ -151,12 +153,12 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 
                 {/* New Section Routes */}
-                <Route path="/ai-reports" element={<AIReports />} />
+                <Route path="/ai-reports" element={<ResultRenderer />} />
                 <Route path="/schools" element={<Schools />} />
                 <Route path="/colleges" element={<Colleges />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/solutions" element={<Colleges />} />
-                <Route path="/reports" element={<AIReports />} />
+                <Route path="/reports" element={<ResultRenderer />} />
                 <Route path="/design-system" element={<DesignSystem />} />
                 
                 {/* Auth Routes */}
@@ -165,9 +167,9 @@ function App() {
 
                 {/* Secure Redirect Routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
-                <Route path="/assessment" element={<ProtectedRoute><AssessmentPage /></ProtectedRoute>} />
-                <Route path="/assessment/:id" element={<ProtectedRoute><AssessmentDirectStart /></ProtectedRoute>} />
-                <Route path="/report" element={<ProtectedRoute><AIReports /></ProtectedRoute>} />
+                <Route path="/assessment" element={<Navigate to="/assessments" replace />} />
+                <Route path="/assessment/:id" element={<AssessmentLayout />} />
+                <Route path="/report" element={<ResultRenderer />} />
                 <Route path="/profile" element={<ProtectedRoute><Navigate to="/dashboard/settings" replace /></ProtectedRoute>} />
 
                  {/* Dashboard Portal Routes */}

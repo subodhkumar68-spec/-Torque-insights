@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAssessment } from '../../context/AssessmentContext';
+import { dbService } from '../../services/dbService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, 
@@ -1278,22 +1279,28 @@ Review the checklist below to complete your mock interview!`;
                 <p className="text-xs text-slate-400 font-bold uppercase mt-1">Official CareerDNA Certificates</p>
               </div>
 
-              {/* Mock Reports List */}
+              {/* Dynamic Reports List */}
               <div className="divide-y divide-slate-100">
-                {[
-                  { title: 'High School Career Aptitude Test', date: 'July 29th, 2026', code: 'ast-aptitude', status: 'Completed' },
-                  { title: '16-Personality Archetype Map', date: 'July 28th, 2026', code: 'ast-personality', status: 'Completed' },
-                ].map((rep, idx) => (
+                {dbService.getReports().length === 0 ? (
+                  <div className="py-8 text-center text-xs font-bold text-slate-400">
+                    No assessments completed yet. Click on "Explore Assessments" to start one!
+                  </div>
+                ) : dbService.getReports().map(r => ({
+                    title: r.subCategory,
+                    date: new Date(r.submittedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                    code: r.id,
+                    status: 'Completed'
+                  })).map((rep, idx) => (
                   <div key={idx} className="py-4 flex justify-between items-center first:pt-0 last:pb-0">
                     <div>
                       <h4 className="text-xs font-black text-slate-950">{rep.title}</h4>
                       <p className="text-[10px] text-slate-400 font-bold mt-0.5">{rep.date} · Code: {rep.code}</p>
                     </div>
                     <button 
-                      onClick={() => alert(`Opening PDF certificate report download for ${rep.code}...`)}
+                      onClick={() => navigate(rep.code.startsWith('rep-') ? `/report?id=${rep.code}` : '/report')}
                       className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[10px] font-black text-brand-red transition-all cursor-pointer"
                     >
-                      Download Report PDF
+                      View & Download Report
                     </button>
                   </div>
                 ))}

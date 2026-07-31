@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { dbService } from '../../services/dbService';
+import { AssessmentRegistry } from '../../assessment-engine/engine/AssessmentRegistry';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, 
@@ -22,7 +23,7 @@ export const AdminDashboard: React.FC = () => {
   // Navigation states
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'directory' | 'whitelabel' | 'domains' | 'licenses' | 'packages' | 'sso' | 'api' | 'templates' | 'migration' | 'compliance' | 'audit' | 'backup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'directory' | 'whitelabel' | 'domains' | 'licenses' | 'packages' | 'sso' | 'api' | 'templates' | 'migration' | 'compliance' | 'audit' | 'backup' | 'reports'>('overview');
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -96,6 +97,7 @@ export const AdminDashboard: React.FC = () => {
         <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto no-scrollbar">
           {[
             { label: 'Overview', icon: BarChart2, tab: 'overview' },
+            { label: 'Candidate Reports', icon: FileText, tab: 'reports' },
             { label: 'Tenant Directory', icon: Building2, tab: 'directory' },
             { label: 'White Label Styling', icon: Palette, tab: 'whitelabel' },
             { label: 'Domains Manager', icon: Globe, tab: 'domains' },
@@ -597,6 +599,70 @@ export const AdminDashboard: React.FC = () => {
             </div>
           )}
 
+          {/* ==================== TAB 14: CANDIDATE REPORTS ==================== */}
+          {activeTab === 'reports' && (
+            <div className="bg-white border border-slate-200 p-6 md:p-8 rounded-3xl text-left space-y-6">
+              <div className="border-b border-slate-150 pb-4">
+                <h3 className="text-xl font-black text-slate-900 leading-none text-slate-905 dark:text-white">Candidate Diagnostic Logs</h3>
+                <p className="text-xs text-slate-400 font-bold uppercase mt-1">Grouped by active assessments</p>
+              </div>
+              
+              <div className="space-y-8">
+                {AssessmentRegistry.getActive().map(config => {
+                  const rList = dbService.getReports().filter(r => r.assessmentId === config.id);
+                  return (
+                    <div key={config.id} className="space-y-3">
+                      <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200 dark:border-slate-805">
+                        <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">{config.title}</h4>
+                        <span className="rounded bg-brand-pink text-brand-red px-2 py-0.5 text-[9px] font-black uppercase tracking-wider">
+                          {rList.length} Reports
+                        </span>
+                      </div>
+                      
+                      {rList.length === 0 ? (
+                        <p className="text-xs text-slate-400 font-bold italic pl-4">No reports recorded for this assessment.</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs text-slate-500 font-medium">
+                            <thead>
+                              <tr className="border-b border-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                                <th className="py-2 pl-4">Candidate</th>
+                                <th className="py-2">Email</th>
+                                <th className="py-2">City</th>
+                                <th className="py-2">Class</th>
+                                <th className="py-2">Completed At</th>
+                                <th className="py-2 pr-4 text-right">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                              {rList.map((rep) => (
+                                <tr key={rep.id} className="hover:bg-slate-50/50">
+                                  <td className="py-3 pl-4 font-bold text-slate-900 dark:text-white">{rep.candidateName || 'Guest Candidate'}</td>
+                                  <td className="py-3">{rep.email || 'N/A'}</td>
+                                  <td className="py-3">{rep.city || 'N/A'}</td>
+                                  <td className="py-3">{rep.class || 'N/A'}</td>
+                                  <td className="py-3">{new Date(rep.submittedAt).toLocaleDateString()}</td>
+                                  <td className="py-3 pr-4 text-right">
+                                    <button
+                                      onClick={() => navigate(`/report?id=${rep.id}`)}
+                                      className="text-brand-red font-black hover:underline cursor-pointer"
+                                    >
+                                      View Report
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
         </main>
       </div>
 
@@ -635,6 +701,7 @@ export const AdminDashboard: React.FC = () => {
                 <nav className="space-y-1">
                   {[
                     { label: 'Overview', icon: BarChart2, tab: 'overview' },
+                    { label: 'Candidate Reports', icon: FileText, tab: 'reports' },
                     { label: 'Tenant Directory', icon: Building2, tab: 'directory' },
                     { label: 'White Label Styling', icon: Palette, tab: 'whitelabel' },
                     { label: 'Domains Manager', icon: Globe, tab: 'domains' },

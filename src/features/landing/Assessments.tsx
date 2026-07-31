@@ -5,6 +5,7 @@ import { useAssessment } from '../../context/AssessmentContext';
 import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FREE_MVP_MODE } from '../../config';
+import { AssessmentRegistry } from '../../assessment-engine/engine/AssessmentRegistry';
 import { 
   BrainCircuit, Search, Filter, ArrowRight, Clock, Award, Star, 
   ShieldCheck, HelpCircle, FileText, CheckCircle, ChevronRight, 
@@ -66,166 +67,42 @@ export const Assessments: React.FC = () => {
   const [guestCity, setGuestCity] = useState('');
 
   // Mock assessments catalog dataset (8 records)
-  const assessmentsDataset: Assessment[] = [
-    {
-      id: 'ast-aptitude',
-      title: 'High School Career Aptitude Test',
-      subTitle: 'Identify core streams and academic disciplines.',
-      category: 'Career Aptitude',
-      audience: 'Class XI-XII',
-      duration: 30,
-      questions: 60,
-      difficulty: 'Medium',
-      certification: true,
-      status: 'Recommended',
-      price: 1499,
-      description: 'Scientifically maps logical, spatial, and numeric capacity to align high school stream selection with university courses.',
-      purpose: 'Diagnose core academic aptitudes to facilitate stress-free stream and degree decisions.',
-      measures: ['Quantitative Reasoning', 'Spatial Visualization', 'Logical Induction', 'Verbal Fluency', 'Holland RIASEC Interests'],
-      scientificFramework: 'Holland RIASEC Interest Inventory & Differential Aptitude Constructs',
-      version: 'v4.2.1',
-      reliability: '0.94 Cronbach Alpha (Very High)'
-    },
-    {
-      id: 'ast-personality',
-      title: '16-Personality Archetype Map',
-      subTitle: 'Understand behavioral patterns and work preferences.',
-      category: 'Personality',
-      audience: 'All',
-      duration: 25,
-      questions: 50,
-      difficulty: 'Easy',
-      certification: true,
-      status: 'Popular',
-      price: 999,
-      description: 'Deep personality analysis mapping work preferences, group dynamics, communication style, and structural alignment.',
-      purpose: 'Uncover individual behavioral styles to determine optimal work environments and leadership roles.',
-      measures: ['Extroversion Index', 'Conceptual Processing', 'Decision Logic Style', 'Task Organization Strategy'],
-      scientificFramework: 'Myers & Briggs 16-Personality Construct Matrix',
-      version: 'v3.5.0',
-      reliability: '0.92 Cronbach Alpha (High)'
-    },
-    {
-      id: 'ast-learning',
-      title: 'Cognitive Learning Style Diagnostic',
-      subTitle: 'Discover how your brain captures and recalls data.',
-      category: 'Learning Style',
-      audience: 'Class XI-XII',
-      duration: 20,
-      questions: 40,
-      difficulty: 'Easy',
-      certification: false,
-      status: 'New',
-      price: 699,
-      description: 'Identifies conceptual, visual, and audio processing structures to refine study strategies and test preparation methods.',
-      purpose: 'Enable learners to optimize study schedules and build personalized note-taking models.',
-      measures: ['Visual Retention', 'Auditory Memory Recall', 'Kinesthetic Concept Processing', 'Abstract Conceptualization'],
-      scientificFramework: 'Kolb Experiential Learning & VARK Modalities',
-      version: 'v2.1.2',
-      reliability: '0.88 Cronbach Alpha (Reliable)'
-    },
-    {
-      id: 'ast-leadership',
-      title: 'Executive Leadership Suitability Index',
-      subTitle: 'Assess strategic decision execution and delegation logic.',
-      category: 'Leadership',
-      audience: 'MBA',
-      duration: 40,
-      questions: 80,
-      difficulty: 'Hard',
-      certification: true,
-      status: 'Recommended',
-      price: 2499,
-      description: 'Advanced scenario-based simulation analyzing delegation habits, stress de-escalation, conflict modeling, and vision tracking.',
-      purpose: 'Establish leadership potential indices for management candidates, supervisors, and organizational directors.',
-      measures: ['Delegation Competency', 'Strategic Alignment', 'Systemic Crisis De-escalation', 'Empathetic Performance Auditing'],
-      scientificFramework: 'Transformational Leadership Constructs & Fiedler Contingency Model',
-      version: 'v5.1.0',
-      reliability: '0.95 Cronbach Alpha (Very High)'
-    },
-    {
-      id: 'ast-eq',
-      title: 'EQ & Emotional Intelligence Diagnostics',
-      subTitle: 'Map social empathy and stress de-escalation indexes.',
-      category: 'Emotional Intelligence',
-      audience: 'All',
-      duration: 30,
-      questions: 60,
-      difficulty: 'Medium',
-      certification: true,
-      status: 'Not Started',
-      price: 1199,
-      description: 'Evaluates self-regulation, empathy, motivation, and interactive metrics critical for teamwork and customer-facing roles.',
-      purpose: 'Measure interpersonal intelligence indices to foster psychological safety in modern corporate structures.',
-      measures: ['Self-Regulation Competency', 'Social Empathy Ratio', 'Intrinsic Motivation Drive', 'Active Listening Integrity'],
-      scientificFramework: 'Goleman Emotional Intelligence Competency Model',
-      version: 'v4.0.1',
-      reliability: '0.91 Cronbach Alpha (High)'
-    },
-    {
-      id: 'ast-employability',
-      title: 'Corporate Talent Employability Blueprint',
-      subTitle: 'Benchmark readiness for modern consulting and tech roles.',
-      category: 'Employability',
-      audience: 'Undergraduate',
-      duration: 45,
-      questions: 90,
-      difficulty: 'Hard',
-      certification: true,
-      status: 'In Progress',
-      progress: 45,
-      price: 1999,
-      description: 'Comprehensive benchmark of quantitative logic, business acumen, verbal capability, and agile task management logic.',
-      purpose: 'Enable campus students to audit skill gaps prior to corporate placement seasons.',
-      measures: ['Logical Acumen', 'Quantitative Aptitude', 'Verbal Fluency', 'Agile Case Performance'],
-      scientificFramework: 'Torque Corporate Readiness Benchmarking Scales',
-      version: 'v6.2.0',
-      reliability: '0.96 Cronbach Alpha (Excellent)'
-    },
-    {
-      id: 'ast-communication',
-      title: 'Business & Verbal Communication Audit',
-      subTitle: 'Gauge presentation, writing, and active listening.',
-      category: 'Communication',
-      audience: 'Professionals',
-      duration: 30,
-      questions: 50,
-      difficulty: 'Medium',
-      certification: true,
-      status: 'Completed',
-      price: 1299,
-      description: 'Measures drafting clarity, presentation articulation, active listening index, and cross-functional feedback logic.',
-      purpose: 'Audit professional communications capability to align remote and matrix organization operations.',
-      measures: ['Drafting Precision', 'Presentation Articulation', 'Active Listening Index', 'Conflict De-escalation Style'],
-      scientificFramework: 'Professional Communications Performance Standard',
-      version: 'v3.2.1',
-      reliability: '0.89 Cronbach Alpha (Reliable)'
-    },
-    {
-      id: 'ast-critical',
-      title: 'Critical Logic & Analytical Aptitude',
-      subTitle: 'Audit problem solving under timed cognitive limits.',
-      category: 'Critical Thinking',
-      audience: 'Undergraduate',
-      duration: 35,
-      questions: 70,
-      difficulty: 'Hard',
-      certification: true,
-      status: 'Not Started',
-      price: 1499,
-      description: 'Rigorous cognitive test auditing induction, deduction, pattern analysis, and fast logic calculations under tight timers.',
-      purpose: 'Diagnose mental agility, critical audit traits, and technical problem-solving capacity.',
-      measures: ['Deductive Inference', 'Inductive Logic Map', 'Numerical Pattern Sequences', 'Data Interpretation Accuracy'],
-      scientificFramework: 'Watson-Glaser Critical Thinking Assessment Scales',
-      version: 'v4.1.2',
-      reliability: '0.93 Cronbach Alpha (High)'
+  const assessmentsDataset: Assessment[] = AssessmentRegistry.getAll().map((config: any) => {
+    let audience: 'Class XI-XII' | 'Undergraduate' | 'MBA' | 'All' | 'Professionals' = 'All';
+    if (config.category?.includes('Aptitude') || config.category?.includes('Learning')) {
+      audience = 'Class XI-XII';
+    } else if (config.category?.includes('Readiness')) {
+      audience = 'Undergraduate';
+    } else if (config.category?.includes('Management')) {
+      audience = 'MBA';
     }
-  ];
+
+    return {
+      id: config.id,
+      title: config.title,
+      subTitle: config.subtitle || '',
+      category: config.category,
+      audience,
+      duration: config.duration || 30,
+      questions: config.questionBank?.length || 25,
+      difficulty: config.difficulty || 'Medium',
+      certification: true,
+      status: config.isPlaceholder ? 'Not Started' : 'Recommended',
+      price: 1499,
+      description: config.subtitle || '',
+      purpose: config.subtitle || '',
+      measures: config.sections?.map((s: any) => s.title) || ['Aptitude Mapping'],
+      scientificFramework: 'Torque Scientific Assessment Framework',
+      version: 'v1.0.0',
+      reliability: '0.92 Cronbach Alpha',
+      isPlaceholder: config.isPlaceholder
+    } as any;
+  });
 
   // Category Selector options
   const categoriesList = [
-    'All', 'Career Aptitude', 'Personality', 'Learning Style', 'Leadership', 
-    'Emotional Intelligence', 'Employability', 'Communication', 'Critical Thinking'
+    'All',
+    ...Array.from(new Set(assessmentsDataset.map(item => item.category)))
   ];
 
   // Filter & Search Logic
@@ -285,28 +162,24 @@ export const Assessments: React.FC = () => {
       console.warn('[Assessments] Supabase guest profiles write skipped or RLS check failed:', err);
     }
 
-    const mapCategory = (aud: string): 'Class XI-XII' | 'BBA' | 'MBA' => {
-      if (aud === 'Class XI-XII') return 'Class XI-XII';
-      if (aud === 'Undergraduate') return 'BBA';
-      return 'MBA';
-    };
-
     setGuestModalOpen(false);
-    startAssessment(mapCategory(pendingAssessment.audience), pendingAssessment.title);
-    navigate('/assessment');
+    startAssessment(pendingAssessment.id);
+    const slug = pendingAssessment.id.replace('ast-', '').replace('future-', '');
+    navigate(`/assessment/${slug}`);
   };
 
   const handleStart = (item: Assessment) => {
+    if ((item as any).isPlaceholder) {
+      alert(`${item.title} will be launched soon! Please choose an active assessment.`);
+      return;
+    }
+
     if (FREE_MVP_MODE) {
       const storedUser = localStorage.getItem('careerdna_current_user');
       if (storedUser) {
-        const mapCategory = (aud: string): 'Class XI-XII' | 'BBA' | 'MBA' => {
-          if (aud === 'Class XI-XII') return 'Class XI-XII';
-          if (aud === 'Undergraduate') return 'BBA';
-          return 'MBA';
-        };
-        startAssessment(mapCategory(item.audience), item.title);
-        navigate('/assessment');
+        startAssessment(item.id);
+        const slug = item.id.replace('ast-', '').replace('future-', '');
+        navigate(`/assessment/${slug}`);
       } else {
         setPendingAssessment(item);
         setGuestModalOpen(true);

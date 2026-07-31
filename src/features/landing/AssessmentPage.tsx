@@ -584,21 +584,22 @@ export const AssessmentPage: React.FC = () => {
                   <span className="text-slate-900 font-black">{finalReport?.id || `rep-${Date.now().toString().slice(-6)}`}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold text-slate-700">
-                  <span> Holland RIASEC Traits:</span>
-                  <span className="text-brand-red font-black">Investigative & Conventional</span>
+                  <span>Assessment Category:</span>
+                  <span className="text-brand-red font-black">{finalReport?.category || 'Career Aptitude'}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold text-slate-700">
-                  <span>Personality Archetype:</span>
-                  <span className="text-slate-900 font-black">INTJ (Logical Architect)</span>
+                  <span>Assessment Name:</span>
+                  <span className="text-slate-900 font-black">{finalReport?.subCategory || 'High School Career Aptitude Test'}</span>
                 </div>
               </div>
 
               <div className="space-y-3 w-full pt-2">
                 <button 
                   onClick={() => {
+                    const nextId = finalReport?.id;
                     setFinalReport(null);
                     setEngineStep('instructions');
-                    navigate('/report');
+                    navigate(nextId ? `/report?id=${nextId}` : '/report');
                   }}
                   className="w-full py-3 rounded-xl bg-brand-red hover:bg-brand-redhover text-xs font-bold text-white shadow-md transition-colors cursor-pointer"
                 >
