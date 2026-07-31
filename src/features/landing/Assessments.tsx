@@ -251,9 +251,14 @@ export const Assessments: React.FC = () => {
       return;
     }
 
-    // Trigger Razorpay checkout
-    setSelectedPlanForPayment(item);
-    setIsPayModalOpen(true);
+    // Directly start the assessment (free of charge)
+    const mapCategory = (aud: string): 'Class XI-XII' | 'BBA' | 'MBA' => {
+      if (aud === 'Class XI-XII') return 'Class XI-XII';
+      if (aud === 'Undergraduate') return 'BBA';
+      return 'MBA';
+    };
+    startAssessment(mapCategory(item.audience), item.title);
+    navigate('/dashboard/student');
   };
 
   const handlePaymentSuccess = (txId: string) => {
