@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FREE_MVP_MODE } from '../../config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BrainCircuit, Mail, ShieldAlert, ArrowRight, UserCheck, 
@@ -351,20 +352,24 @@ export const SignUp: React.FC = () => {
                     <ArrowRight className="h-4 w-4" />
                   </button>
 
-                  <div className="relative py-1 flex items-center justify-center text-center">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200" />
-                    </div>
-                    <span className="relative bg-white px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Or</span>
-                  </div>
+                  {!FREE_MVP_MODE && (
+                    <>
+                      <div className="relative py-1 flex items-center justify-center text-center">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-slate-200" />
+                        </div>
+                        <span className="relative bg-white px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Or</span>
+                      </div>
 
-                  <button
-                    type="button"
-                    onClick={() => alert("Connecting Google Sign-Up portal...")}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
-                  >
-                    Sign Up with Google
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => alert("Connecting Google Sign-Up portal...")}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+                      >
+                        Sign Up with Google
+                      </button>
+                    </>
+                  )}
 
                 </form>
               </motion.div>

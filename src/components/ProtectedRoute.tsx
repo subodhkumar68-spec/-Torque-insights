@@ -1,11 +1,17 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FREE_MVP_MODE } from '../config';
 
 export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { session, loading } = useAuth();
 
-  console.log('[ProtectedRoute] Evaluating route access:', { session, loading });
+  console.log('[ProtectedRoute] Evaluating route access:', { session, loading, FREE_MVP_MODE });
+
+  if (FREE_MVP_MODE) {
+    console.log('[ProtectedRoute] FREE_MVP_MODE active: access permitted without checks.');
+    return <>{children}</>;
+  }
 
   if (loading) {
     console.log('[ProtectedRoute] Session is currently loading. Rendering loader...');

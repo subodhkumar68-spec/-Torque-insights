@@ -20,10 +20,13 @@ export const AIReports: React.FC = () => {
   const [showEmailDialog, setShowEmailDialog] = useState(false);
 
   // Mock Candidate Details
+  const activeUser = JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
+  const candidateName = activeUser?.name || "Sarah Jenkins";
+
   const reportMetadata = {
-    name: "Sarah Jenkins",
+    name: candidateName,
     id: "REP-90A07-2026",
-    date: "July 29, 2026",
+    date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
     status: "Verified AI Report",
     overallScore: 92
   };

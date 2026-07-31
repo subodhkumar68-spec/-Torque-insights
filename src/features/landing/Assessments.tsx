@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useAssessment } from '../../context/AssessmentContext';
 import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FREE_MVP_MODE } from '../../config';
 import { 
   BrainCircuit, Search, Filter, ArrowRight, Clock, Award, Star, 
   ShieldCheck, HelpCircle, FileText, CheckCircle, ChevronRight, 
@@ -54,6 +55,15 @@ export const Assessments: React.FC = () => {
   // Razorpay simulation state
   const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<Assessment | null>(null);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+
+  // Guest Registration Modal states
+  const [guestModalOpen, setGuestModalOpen] = useState(false);
+  const [pendingAssessment, setPendingAssessment] = useState<Assessment | null>(null);
+  const [guestName, setGuestName] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEducation, setGuestEducation] = useState('Class XII');
+  const [guestCity, setGuestCity] = useState('');
 
   // Mock assessments catalog dataset (8 records)
   const assessmentsDataset: Assessment[] = [
@@ -239,7 +249,71 @@ export const Assessments: React.FC = () => {
   const featuredAssessments = assessmentsDataset.slice(0, 3);
   const recentlyViewed = assessmentsDataset.slice(4, 7);
 
+  const handleGuestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingAssessment) return;
+
+    const guestUser = {
+      id: `guest-${Date.now()}`,
+      name: guestName,
+      email: guestEmail,
+      phone: guestPhone,
+      schoolName: guestEducation.includes('Class') ? guestEducation : undefined,
+      collegeName: !guestEducation.includes('Class') ? guestEducation : undefined,
+      city: guestCity,
+      role: 'student' as const,
+      plan: 'Premium',
+      credits: 'Unlimited',
+      subscription: 'Active',
+      status: 'Active'
+    };
+
+    localStorage.setItem('careerdna_current_user', JSON.stringify(guestUser));
+
+    try {
+      await supabase
+        .from('guest_profiles')
+        .insert([{
+          id: guestUser.id,
+          name: guestUser.name,
+          email: guestUser.email,
+          phone: guestUser.phone,
+          education: guestEducation,
+          city: guestUser.city
+        }]);
+    } catch (err) {
+      console.warn('[Assessments] Supabase guest profiles write skipped or RLS check failed:', err);
+    }
+
+    const mapCategory = (aud: string): 'Class XI-XII' | 'BBA' | 'MBA' => {
+      if (aud === 'Class XI-XII') return 'Class XI-XII';
+      if (aud === 'Undergraduate') return 'BBA';
+      return 'MBA';
+    };
+
+    setGuestModalOpen(false);
+    startAssessment(mapCategory(pendingAssessment.audience), pendingAssessment.title);
+    navigate('/assessment');
+  };
+
   const handleStart = (item: Assessment) => {
+    if (FREE_MVP_MODE) {
+      const storedUser = localStorage.getItem('careerdna_current_user');
+      if (storedUser) {
+        const mapCategory = (aud: string): 'Class XI-XII' | 'BBA' | 'MBA' => {
+          if (aud === 'Class XI-XII') return 'Class XI-XII';
+          if (aud === 'Undergraduate') return 'BBA';
+          return 'MBA';
+        };
+        startAssessment(mapCategory(item.audience), item.title);
+        navigate('/assessment');
+      } else {
+        setPendingAssessment(item);
+        setGuestModalOpen(true);
+      }
+      return;
+    }
+
     console.log('[Assessments] Starting access check in handleStart...', { user, session, loading });
     
     if (loading) {
@@ -827,6 +901,95 @@ export const Assessments: React.FC = () => {
         />
       )}
 
+      {/* Guest Registration Modal */}
+      {guestModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl relative space-y-6 text-left">
+            <button 
+              onClick={() => setGuestModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-650 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div>
+              <span className="text-[10px] font-black text-brand-red uppercase tracking-widest block mb-1">Frictionless MVP Trial</span>
+              <h3 className="text-xl font-black text-slate-950 dark:text-white leading-tight">Start Your Free Assessment</h3>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">Please provide your details to begin immediately</p>
+            </div>
+
+            <form onSubmit={handleGuestSubmit} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  placeholder="e.g. Rohan Sharma"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 px-3 py-2.5 text-xs font-bold focus:border-brand-red focus:outline-none dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  required 
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  placeholder="e.g. rohan@domain.com"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 px-3 py-2.5 text-xs font-bold focus:border-brand-red focus:outline-none dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Mobile Number</label>
+                <input 
+                  type="tel" 
+                  required 
+                  value={guestPhone}
+                  onChange={(e) => setGuestPhone(e.target.value)}
+                  placeholder="e.g. 9824413735"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 px-3 py-2.5 text-xs font-bold focus:border-brand-red focus:outline-none dark:text-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Class / College</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={guestEducation}
+                    onChange={(e) => setGuestEducation(e.target.value)}
+                    placeholder="e.g. Class XII / IIT"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 px-3 py-2.5 text-xs font-bold focus:border-brand-red focus:outline-none dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">City</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={guestCity}
+                    onChange={(e) => setGuestCity(e.target.value)}
+                    placeholder="e.g. Ahmedabad"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 px-3 py-2.5 text-xs font-bold focus:border-brand-red focus:outline-none dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full py-3 rounded-xl bg-brand-red hover:bg-brand-redhover text-xs font-bold text-white shadow-md hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-1.5 mt-2"
+              >
+                Continue to Test <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

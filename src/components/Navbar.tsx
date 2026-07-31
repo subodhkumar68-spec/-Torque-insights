@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, BrainCircuit, ArrowRight, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { FREE_MVP_MODE } from '../config';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -186,14 +187,14 @@ export const Navbar: React.FC = () => {
                 />
               </div>
             </div>
-          ) : (
+          ) : !FREE_MVP_MODE ? (
             <Link
               to="/login"
               className="text-sm font-bold text-slate-700 hover:text-brand-red transition-all"
             >
               Login
             </Link>
-          )}
+          ) : null}
           <Link
             to="/contact"
             className="rounded-full bg-brand-red px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-500/10 hover:bg-brand-redhover hover:scale-[1.02] transition-all"
@@ -319,7 +320,7 @@ export const Navbar: React.FC = () => {
                     Logout
                   </button>
                 </div>
-              ) : (
+              ) : !FREE_MVP_MODE ? (
                 <Link 
                   to="/login" 
                   onClick={() => setIsOpen(false)} 
@@ -327,7 +328,7 @@ export const Navbar: React.FC = () => {
                 >
                   Login
                 </Link>
-              )}
+              ) : null}
               <Link 
                 to="/contact" 
                 onClick={() => setIsOpen(false)} 

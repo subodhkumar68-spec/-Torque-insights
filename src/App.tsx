@@ -23,6 +23,7 @@ import { Blog } from './features/landing/Blog';
 import { BlogDetail } from './features/landing/BlogDetail';
 import { FAQ } from './features/landing/FAQ';
 import { Contact } from './features/landing/Contact';
+import { AssessmentPage } from './features/landing/AssessmentPage';
 
 // New Sections
 import { AIReports } from './features/landing/AIReports';
@@ -164,6 +165,7 @@ function App() {
 
                 {/* Secure Redirect Routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
+                <Route path="/assessment" element={<ProtectedRoute><AssessmentPage /></ProtectedRoute>} />
                 <Route path="/assessment/:id" element={<ProtectedRoute><AssessmentDirectStart /></ProtectedRoute>} />
                 <Route path="/report" element={<ProtectedRoute><AIReports /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Navigate to="/dashboard/settings" replace /></ProtectedRoute>} />

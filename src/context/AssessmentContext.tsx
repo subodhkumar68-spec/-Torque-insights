@@ -84,7 +84,8 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [activeSession, questions]);
 
   const autoSubmitSession = (session: AssessmentSession, testQuestions: Question[]) => {
-    if (!user) return;
+    const activeUser = user || JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
+    if (!activeUser) return;
     
     // Auto fill empty answers
     const finalAnswers = { ...session.answers };
@@ -100,7 +101,7 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     });
 
-    aiService.generateReport(user.id, session.category, session.subCategory, finalAnswers);
+    aiService.generateReport(activeUser.id, session.category, session.subCategory, finalAnswers);
     setActiveSession(null);
     setQuestions([]);
     setTimeLeft(0);
@@ -163,12 +164,13 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const submitAssessment = (): CareerDNAReport | null => {
-    if (!user || !activeSession) return null;
+    const activeUser = user || JSON.parse(localStorage.getItem('careerdna_current_user') || 'null');
+    if (!activeUser || !activeSession) return null;
 
     if (timerRef.current) clearInterval(timerRef.current);
 
     const report = aiService.generateReport(
-      user.id,
+      activeUser.id,
       activeSession.category,
       activeSession.subCategory,
       activeSession.answers

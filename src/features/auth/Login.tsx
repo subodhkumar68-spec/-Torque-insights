@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FREE_MVP_MODE } from '../../config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BrainCircuit, Mail, ShieldAlert, ArrowRight, UserCheck, 
@@ -270,30 +271,34 @@ export const Login: React.FC = () => {
                     <ArrowRight className="h-4 w-4" />
                   </button>
 
-                  <div className="relative py-2 flex items-center justify-center text-center">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200" />
-                    </div>
-                    <span className="relative bg-white px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Or</span>
-                  </div>
+                  {!FREE_MVP_MODE && (
+                    <>
+                      <div className="relative py-2 flex items-center justify-center text-center">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-slate-200" />
+                        </div>
+                        <span className="relative bg-white px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Or</span>
+                      </div>
 
-                  <button
-                    type="button"
-                    disabled={loading}
-                    onClick={async () => {
-                      setError(null);
-                      setLoading(true);
-                      try {
-                        await loginWithGoogle();
-                      } catch (err: any) {
-                        setError(err.message || 'Google authentication failed.');
-                        setLoading(false);
-                      }
-                    }}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer disabled:opacity-50"
-                  >
-                    Continue with Google
-                  </button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={async () => {
+                          setError(null);
+                          setLoading(true);
+                          try {
+                            await loginWithGoogle();
+                          } catch (err: any) {
+                            setError(err.message || 'Google authentication failed.');
+                            setLoading(false);
+                          }
+                        }}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Continue with Google
+                      </button>
+                    </>
+                  )}
 
                 </form>
 
