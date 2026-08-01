@@ -7,6 +7,7 @@ import { commerceConfig } from '../configs/assessments/commerce';
 import { managementConfig } from '../configs/assessments/management';
 import { ipmatConfig } from '../configs/assessments/ipmat';
 import { cuetConfig } from '../configs/assessments/cuet';
+import { communicationConfig } from '../configs/assessments/communication';
 
 import { aiReadinessPlaceholder } from '../configs/future/ai-readiness';
 import { studyAbroadPlaceholder } from '../configs/future/study-abroad';
@@ -46,7 +47,8 @@ const activeAssessments: AssessmentConfig[] = [
   commerceConfig,
   managementConfig,
   ipmatConfig,
-  cuetConfig
+  cuetConfig,
+  communicationConfig
 ];
 
 const futurePlaceholders: AssessmentConfig[] = [
@@ -60,7 +62,6 @@ const futurePlaceholders: AssessmentConfig[] = [
   { id: 'future-cat', title: 'CAT Readiness Diagnostic', subtitle: 'Evaluate verbal, quantitative, and data reasoning profiles.', icon: 'Compass', category: 'College Entrance', isPlaceholder: true },
   { id: 'future-gmat', title: 'GMAT Readiness Diagnostic', subtitle: 'Evaluate verbal reasoning and critical data analytics fit.', icon: 'Compass', category: 'College Entrance', isPlaceholder: true },
   { id: 'future-digital-skills', title: 'Digital Skills Assessment', subtitle: 'Audit competency in digital tools and cloud workflows.', icon: 'Zap', category: 'Digital Skills', isPlaceholder: true },
-  { id: 'future-communication', title: 'Communication Skills Diagnostic', subtitle: 'Gauge professional articulation and business writing.', icon: 'Mail', category: 'Soft Skills', isPlaceholder: true },
   { id: 'future-entrepreneurship', title: 'Entrepreneurship Readiness', subtitle: 'Benchmark venture ideation and risk appetite profiles.', icon: 'Rocket', category: 'Entrepreneurship', isPlaceholder: true },
   { id: 'future-graduate-employability', title: 'Graduate Employability Benchmark', subtitle: 'Audit core campus-to-corporate readiness variables.', icon: 'Briefcase', category: 'Employability', isPlaceholder: true },
   { id: 'future-campus-placement', title: 'Campus Placement Readiness', subtitle: 'Evaluate verbal reasoning and data reasoning.', icon: 'Briefcase', category: 'Employability', isPlaceholder: true },

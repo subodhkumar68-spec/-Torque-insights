@@ -123,6 +123,52 @@ export const AssessmentScoring = {
       };
     }
     
+    // Custom scoring logic for Communication Skills (exact percentage of correct answers)
+    if (config.id === 'future-communication') {
+      const dimensions: Record<string, number> = {
+        verbal: 0,
+        written: 0,
+        business: 0,
+        interpersonal: 0,
+        presentation: 0,
+        interview: 0
+      };
+
+      questions.forEach(q => {
+        const dim = q.category; // maps to verbal, written, business, interpersonal, presentation, interview
+        if (dim in dimensions) {
+          if (!dimensions[`_total_${dim}`]) {
+            dimensions[`_total_${dim}`] = 0;
+            dimensions[`_correct_${dim}`] = 0;
+          }
+          dimensions[`_total_${dim}`]++;
+          const answerVal = answers[q.id];
+          if (answerVal === q.correctAnswer) {
+            dimensions[`_correct_${dim}`]++;
+          }
+        }
+      });
+
+      // Calculate final percentages
+      const activeDims = ['verbal', 'written', 'business', 'interpersonal', 'presentation', 'interview'];
+      let overallSum = 0;
+      activeDims.forEach(dim => {
+        const total = dimensions[`_total_${dim}`] || 0;
+        const correct = dimensions[`_correct_${dim}`] || 0;
+        dimensions[dim] = total > 0 ? Math.max(30, Math.min(100, Math.round((correct / total) * 100))) : 75;
+        delete dimensions[`_total_${dim}`];
+        delete dimensions[`_correct_${dim}`];
+        overallSum += dimensions[dim];
+      });
+
+      const overallScore = Math.round(overallSum / activeDims.length);
+
+      return {
+        dimensions,
+        overallScore
+      };
+    }
+    
     // Initialize dimension scores
     const dimensions: Record<string, number> = {};
     

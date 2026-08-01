@@ -127,6 +127,18 @@ export const ReportGenerator = {
               'Optimize academic self-discipline and time management blocks.'
             ]
           };
+        case 'future-communication':
+          return {
+            summary: `The candidate has completed the Communication Skills Diagnostic. Their scores map their baseline verbal, written, business, interpersonal, presentation, and interview communication competencies, highlighting their readiness for professional placement and corporate leadership tracks.`,
+            weaknesses: [
+              'Refine assertive public speaking delivery under direct audience gaze.',
+              'Revise business proposal syntax patterns to maintain brevity.'
+            ],
+            growthAreas: [
+              'Participate in mock team presentation and executive workshops.',
+              'Solve daily business email writing and client conversation simulation exercises.'
+            ]
+          };
         default:
           return {
             summary: `The candidate has completed the ${title} diagnostics. Their profile demonstrates high potential and suitability for growth in their chosen professional domain.`,
@@ -195,6 +207,31 @@ export const ReportGenerator = {
         `Improve mock pacing and strategies for ${sortedDims[2].name} sections.`
       ];
     }
+    if (config.id === 'future-communication') {
+      const sortedDims = [
+        { name: 'Verbal Communication', score: scores.dimensions.verbal || 0 },
+        { name: 'Written Communication', score: scores.dimensions.written || 0 },
+        { name: 'Business Communication', score: scores.dimensions.business || 0 },
+        { name: 'Interpersonal Skills', score: scores.dimensions.interpersonal || 0 },
+        { name: 'Presentation Skills', score: scores.dimensions.presentation || 0 },
+        { name: 'Interview Skills', score: scores.dimensions.interview || 0 }
+      ].sort((a, b) => b.score - a.score);
+
+      strengths = [
+        `Excellent articulation in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
+        `Highly effective in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
+      ];
+
+      weaknesses = [
+        `Refine execution parameters in ${sortedDims[5].name} (Score: ${sortedDims[5].score}%)`,
+        `Enhance active habits in ${sortedDims[4].name} (Score: ${sortedDims[4].score}%)`
+      ];
+
+      growthAreas = [
+        `Enroll in advanced training workshops targeting ${sortedDims[5].name}.`,
+        `Practice mock presentation cycles under structured peer reviews to lift ${sortedDims[4].name}.`
+      ];
+    }
 
     const careerRecommendations = config.recommendedCareers?.map((c, i) => ({
       career: c,
@@ -240,6 +277,15 @@ export const ReportGenerator = {
           return ['State Universities accepting CUET', 'Top Private Universities', 'Autonomous College Panels'];
         } else {
           return ['Subject Foundation Program', 'Bridge Learning Course', 'Subject Strengthening Plan'];
+        }
+      }
+      if (config.id === 'future-communication') {
+        if (scores.overallScore >= 75) {
+          return ['Corporate Executive Coaching', 'Advanced Leadership Masterclass', 'Global Networking Seminars'];
+        } else if (scores.overallScore >= 40) {
+          return ['Public Speaking Practice Circles', 'Business Writing Bootcamps', 'Corporate Etiquette Workshops'];
+        } else {
+          return ['Vocabulary Improvement Program', 'Basic Grammar & Syntax Strengthening', 'Interpersonal Listening Foundations'];
         }
       }
       return ['Tier 1 Universities', 'Symbiosis Pune', 'BITS Pilani'];

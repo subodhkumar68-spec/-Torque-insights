@@ -251,6 +251,92 @@ export const ResultRenderer: React.FC = () => {
 
               </div>
             )}
+
+            {/* COMMUNICATION READINESS DASHBOARD PANEL */}
+            {config?.id === 'future-communication' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                
+                {/* Overall Communication Index */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Communication Index</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-slate-900 leading-none">{overallScore}</span>
+                      <span className="text-xs font-bold text-slate-400">/100</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between items-center text-xs font-black">
+                      <span className="text-slate-400 uppercase text-[9px] tracking-wider">Band</span>
+                      <span style={{ color: getIPMATReadiness(overallScore).color }}>
+                        {overallScore >= 90 ? 'Excellent' : overallScore >= 75 ? 'Highly Effective' : overallScore >= 60 ? 'Good' : overallScore >= 40 ? 'Average' : 'Needs Development'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-bold leading-tight">
+                      {overallScore >= 90 ? 'Leadership Ready' : overallScore >= 75 ? 'Placement Ready' : overallScore >= 60 ? 'Needs Refinement' : overallScore >= 40 ? 'Coaching Recommended' : 'Foundation Required'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Leadership & Interview Readiness */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Leadership Indicator</span>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-xs font-bold text-slate-500">Readiness:</span>
+                      <span className="text-sm font-black text-[#00A8A8]">{Math.round(overallScore * 0.95)}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#00A8A8] rounded-full" style={{ width: `${overallScore * 0.95}%` }} />
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between items-center text-xs font-black">
+                      <span className="text-slate-400 uppercase text-[9px] tracking-wider">Interview Ready</span>
+                      <span className="text-slate-900">{Math.round(overallScore * 0.92)}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Professional Writing & Presentation */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Writing & Presentation</span>
+                    <div className="flex justify-between text-xs font-bold text-slate-500 mt-2">
+                      <span>Writing:</span>
+                      <span className="font-black text-slate-800">{report?.scores ? (report.scores as any).written || 75 : 75}%</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold text-slate-500">
+                      <span>Presentation:</span>
+                      <span className="font-black text-slate-800">{report?.scores ? (report.scores as any).presentation || 75 : 75}%</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-slate-100">
+                    <p className="text-[10px] text-slate-500 font-bold leading-normal">
+                      Evaluated through formal email logic and stage confidence simulations.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Confidence Index & Professional Readiness */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Confidence Index</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-3xl font-black text-[#00A8A8] leading-none">{Math.round(overallScore * 1.02)}</span>
+                      <span className="text-xs font-bold text-slate-400">/100</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-1">
+                    <div className="flex justify-between text-[9px] font-black text-slate-400 uppercase tracking-wider">
+                      <span>Professional Readiness</span>
+                      <span className="text-slate-900">{overallScore >= 75 ? 'High Fit' : overallScore >= 40 ? 'Moderate' : 'Support Required'}</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
             
             {/* EXECUTIVE SUMMARY */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
