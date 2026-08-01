@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
+html {
+  font-size: 16.8px; /* Globally scales all rem-based typography across the site by ~5% */
+}
+
 @theme {
+  --color-slate-950: #001A38;
+  --color-slate-900: #002D62;
+  --color-slate-800: #003B75;
+  --color-slate-700: #004A8F;
+  --color-slate-600: #005FA8;
+  --color-slate-500: #4B6E96;
+  
   --color-brand-red: var(--brand-primary);       /* Torque Insights Primary Accent */
   --color-brand-slate: var(--brand-slate);       /* Text primary colors */
   --color-brand-light: var(--brand-light);       /* Light Grey Background Accent */
@@ -8,8 +19,8 @@
   --color-brand-pink: var(--brand-pink);         /* Soft background accent tint */
   --color-brand-redhover: var(--brand-primary-hover); /* Deeper hover state red */
   
-  --color-brand-blue: #2563EB;
-  --color-brand-sky: #38BDF8;
+  --color-brand-blue: #002D62;
+  --color-brand-sky: #00A8A8;
 
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
@@ -18,8 +29,8 @@
   --animate-draw-line: drawLine 3s ease-out infinite;
 
   @keyframes pulseGlow {
-    0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 5px rgba(20, 184, 166, 0.4)); }
-    50% { opacity: 1; filter: drop-shadow(0 0 15px rgba(20, 184, 166, 0.8)); }
+    0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 5px rgba(0, 168, 168, 0.4)); }
+    50% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 168, 168, 0.8)); }
   }
   @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
@@ -32,43 +43,43 @@
 }
 
 :root {
-  --brand-primary: #14B8A6;         /* Turquoise */
-  --brand-primary-hover: #0D9488;   /* Darker Turquoise */
-  --brand-secondary: #2563EB;       /* Royal Blue */
+  --brand-primary: #00A8A8;         /* Turquoise */
+  --brand-primary-hover: #008B8B;   /* Darker Turquoise */
+  --brand-secondary: #002D62;       /* Citibank Blue */
   --brand-accent: #38BDF8;          /* Sky Blue */
   
-  --brand-slate: #1E293B;           /* Dark Charcoal Text */
+  --brand-slate: #002D62;           /* Citibank Blue Text */
   --brand-light: #F8FAFC;           /* Very Light Gray */
-  --brand-gray: #64748B;            /* Slate Gray */
-  --brand-pink: #ECFDF5;            /* Soft Turquoise light background */
+  --brand-gray: #4B6E96;            /* Muted Blue-Gray Text */
+  --brand-pink: #E0F2F1;            /* Soft Turquoise light background */
   
   --bg-primary: #ffffff;
   --bg-secondary: #F8FAFC;
-  --text-primary: #1E293B;
-  --text-secondary: #64748B;
-  --card-bg: rgba(255, 255, 255, 0.7);
-  --card-border: rgba(226, 232, 240, 0.8);
-  --shadow-color: rgba(0, 0, 0, 0.02);
+  --text-primary: #002D62;
+  --text-secondary: #4B6E96;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(0, 45, 98, 0.1);
+  --shadow-color: rgba(0, 45, 98, 0.01);
 }
 
 .dark {
-  --brand-primary: #14B8A6;         /* Turquoise */
-  --brand-primary-hover: #2DD4BF;   /* Brighter Turquoise */
-  --brand-secondary: #2563EB;       /* Royal Blue */
+  --brand-primary: #00A8A8;         /* Turquoise */
+  --brand-primary-hover: #00C4C4;   /* Brighter Turquoise */
+  --brand-secondary: #003B75;       /* Citibank Blue Darker Shade */
   --brand-accent: #38BDF8;          /* Sky Blue */
   
   --brand-slate: #F8FAFC;           /* Off-White Text */
-  --brand-light: #111827;           /* Slate-900 Card Background */
-  --brand-gray: #94A3B8;            /* Gray Text */
-  --brand-pink: #1E293B;            /* Soft Dark Background Accent */
+  --brand-light: #001026;           /* Deep Blue Card BG */
+  --brand-gray: #8CAAC9;            /* Gray Text */
+  --brand-pink: #001A38;            /* Soft Dark Background Accent */
   
-  --bg-primary: #0B1220;            /* Premium Dark BG */
-  --bg-secondary: #0F172A;          /* Slate-900 BG */
+  --bg-primary: #000B1A;            /* Deep Corporate Dark BG */
+  --bg-secondary: #001026;          /* Deep Blue BG */
   --text-primary: #ffffff;
-  --text-secondary: #94A3B8;
-  --card-bg: #111827;
-  --card-border: #1F2937;
-  --shadow-color: rgba(0, 0, 0, 0.2);
+  --text-secondary: #8CAAC9;
+  --card-bg: #001026;
+  --card-border: #001A38;
+  --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 @utility glass-nav {
