@@ -13,7 +13,7 @@ export const ReportGenerator = {
     const activeUser = JSON.parse(localStorage.getItem('careerdna_current_user') || 'null') || { name: 'Sarah Jenkins', email: 'guest@example.com' };
     
     // 2. Resolve content from configuration
-    const strengths = config.recommendedCareers 
+    let strengths = config.recommendedCareers 
       ? config.recommendedCareers.map(c => `Demonstrates strong potential for success in ${c} related tracks.`)
       : ['Analytical Problem Solving', 'Conceptual Logic Mastery'];
       
@@ -103,6 +103,18 @@ export const ReportGenerator = {
               'Study case studies on transformational leadership and corporate conflict resolution.'
             ]
           };
+        case 'ast-ipmat':
+          return {
+            summary: `The candidate has completed the IPMAT Readiness Diagnostic. Their scores indicate their baseline preparation level for entrance examinations at IIM Indore, Rohtak, Ranchi, and other top-tier business schools.`,
+            weaknesses: [
+              'Review higher mathematics topics such as permutations, combinations, and probability.',
+              'Increase verbal reading comprehension speed and accuracy under strict time limits.'
+            ],
+            growthAreas: [
+              'Solve daily timed practice sets of quantitative aptitude questions.',
+              'Read daily editorials from standard newspapers (e.g., The Hindu, Aeon) to improve verbal reading speed.'
+            ]
+          };
         default:
           return {
             summary: `The candidate has completed the ${title} diagnostics. Their profile demonstrates high potential and suitability for growth in their chosen professional domain.`,
@@ -119,8 +131,34 @@ export const ReportGenerator = {
     };
 
     const specContent = getAssessmentSpecificContent(config.id, config.title);
-    const weaknesses = specContent.weaknesses;
-    const growthAreas = specContent.growthAreas;
+    
+    // Resolve dynamic strengths/weaknesses based on dimension ranking
+    let weaknesses = specContent.weaknesses;
+    let growthAreas = specContent.growthAreas;
+
+    if (config.id === 'ast-ipmat') {
+      const sortedDims = [
+        { name: 'Quantitative Aptitude', score: scores.dimensions.quantitativeAptitude || 0 },
+        { name: 'Higher Mathematics', score: scores.dimensions.higherMathematics || 0 },
+        { name: 'Logical Reasoning', score: scores.dimensions.logicalReasoning || 0 },
+        { name: 'Verbal Ability', score: scores.dimensions.verbalAbility || 0 }
+      ].sort((a, b) => b.score - a.score);
+
+      strengths = [
+        `Strong performance in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
+        `Demonstrates competitive aptitude in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
+      ];
+
+      weaknesses = [
+        `Needs improvement in ${sortedDims[3].name} (Score: ${sortedDims[3].score}%)`,
+        `Optimize question pacing and deduction accuracy in ${sortedDims[2].name} (Score: ${sortedDims[2].score}%)`
+      ];
+
+      growthAreas = [
+        `Focus on refining topics in ${sortedDims[3].name} via daily mock practices.`,
+        `Practice solving higher-difficulty logic puzzles under strict timed constraints.`
+      ];
+    }
 
     const careerRecommendations = config.recommendedCareers?.map((c, i) => ({
       career: c,
@@ -145,9 +183,22 @@ export const ReportGenerator = {
         phase: 'Phase 2',
         title: 'Advanced Diagnostic Certs',
         duration: '6 Months',
-        details: [`Obtain domain credentials`, `Build interactive project portfolios`]
+        details: [`Obtain credentials for Top Integrated BBA/MBA programs`, `Build interactive case studies`]
       }
     ];
+
+    const getSuggestedColleges = () => {
+      if (config.id === 'ast-ipmat') {
+        if (scores.overallScore >= 75) {
+          return ['IIM Indore', 'IIM Rohtak', 'IIM Ranchi', 'IIFT Kakinada', 'NALSAR Hyderabad'];
+        } else if (scores.overallScore >= 40) {
+          return ['NMIMS Mumbai', 'Christ University Bangalore', 'Symbiosis Pune', 'TAPMI Manipal', 'Alliance University'];
+        } else {
+          return ['Management Foundation Program', 'IPM Bridge Course', 'Quantitative Skill Improvement Plan'];
+        }
+      }
+      return ['Tier 1 Universities', 'Symbiosis Pune', 'BITS Pilani'];
+    };
 
     // 3. Compile report object with rich schema properties
     const newReport: CareerDNAReport = {
@@ -164,15 +215,16 @@ export const ReportGenerator = {
         problemSolving: scores.dimensions.problemSolving || scores.overallScore,
         emotionalIntelligence: scores.dimensions.emotionalIntelligence || scores.overallScore,
         decisionMaking: scores.dimensions.decisionMaking || scores.overallScore,
-        criticalThinking: scores.dimensions.criticalThinking || scores.overallScore
-      },
+        criticalThinking: scores.dimensions.criticalThinking || scores.overallScore,
+        ...scores.dimensions
+      } as any,
       strengths,
       weaknesses,
       growthAreas,
       careerRecommendations,
       suggestedDegrees: config.recommendedCourses || [],
       suggestedCertifications: [`${config.title} Certified Associate`],
-      suggestedColleges: ['Tier 1 Universities', 'Symbiosis Pune', 'BITS Pilani'],
+      suggestedColleges: getSuggestedColleges(),
       skillGapAnalysis,
       learningRoadmap,
       

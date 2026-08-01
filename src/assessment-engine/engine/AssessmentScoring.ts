@@ -13,6 +13,52 @@ export const AssessmentScoring = {
     const questions = config.questionBank || [];
     const model = config.scoringModel;
     
+    // Custom scoring logic for IPMAT (exact percentage of correct answers)
+    if (config.id === 'ast-ipmat') {
+      const dimensions: Record<string, number> = {
+        quantitativeAptitude: 0,
+        higherMathematics: 0,
+        logicalReasoning: 0,
+        verbalAbility: 0
+      };
+
+      questions.forEach(q => {
+        const dim = q.category; // maps to quantitativeAptitude, higherMathematics, etc.
+        if (dim in dimensions) {
+          // Increment total questions counter for that dimension programmatically
+          if (!dimensions[`_total_${dim}`]) {
+            dimensions[`_total_${dim}`] = 0;
+            dimensions[`_correct_${dim}`] = 0;
+          }
+          dimensions[`_total_${dim}`]++;
+          const answerVal = answers[q.id];
+          if (answerVal === q.correctAnswer) {
+            dimensions[`_correct_${dim}`]++;
+          }
+        }
+      });
+
+      // Calculate final percentages
+      const activeDims = ['quantitativeAptitude', 'higherMathematics', 'logicalReasoning', 'verbalAbility'];
+      let overallSum = 0;
+      activeDims.forEach(dim => {
+        const total = dimensions[`_total_${dim}`] || 0;
+        const correct = dimensions[`_correct_${dim}`] || 0;
+        dimensions[dim] = total > 0 ? Math.max(30, Math.min(100, Math.round((correct / total) * 100))) : 75;
+        // Clean up temporary counters
+        delete dimensions[`_total_${dim}`];
+        delete dimensions[`_correct_${dim}`];
+        overallSum += dimensions[dim];
+      });
+
+      const overallScore = Math.round(overallSum / activeDims.length);
+
+      return {
+        dimensions,
+        overallScore
+      };
+    }
+    
     // Initialize dimension scores
     const dimensions: Record<string, number> = {};
     

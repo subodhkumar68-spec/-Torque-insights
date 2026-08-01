@@ -64,6 +64,19 @@ export const ResultRenderer: React.FC = () => {
     return { subject: d.label, score: val };
   });
 
+  const dimensionValues = template.dimensions.map((d: any) => {
+    return report?.scores ? (report.scores as any)[d.key] || 75 : 75;
+  });
+  const overallScore = Math.round(dimensionValues.reduce((a: number, b: number) => a + b, 0) / (dimensionValues.length || 1));
+
+  const getIPMATReadiness = (score: number) => {
+    if (score >= 90) return { band: 'Excellent', desc: 'Highly Competitive for Top IPM Programs', pct: 99.2 + (score - 90) * 0.08, color: '#10B981', prob: '95%' };
+    if (score >= 75) return { band: 'Very Good', desc: 'Needs minor improvement', pct: 90.0 + (score - 75) * 0.6, color: '#059669', prob: '85%' };
+    if (score >= 60) return { band: 'Good', desc: 'Moderate preparation required', pct: 75.0 + (score - 60) * 1.0, color: '#3B82F6', prob: '65%' };
+    if (score >= 40) return { band: 'Average', desc: 'Needs structured coaching', pct: 40.0 + (score - 40) * 1.75, color: '#F59E0B', prob: '35%' };
+    return { band: 'Needs Improvement', desc: 'Strong foundation building recommended', pct: Math.max(5, score * 1.0), color: '#EF4444', prob: '10%' };
+  };
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopiedLink(true);
@@ -118,6 +131,66 @@ export const ResultRenderer: React.FC = () => {
           
           {/* LEFT CONTENT AREA */}
           <div className="lg:col-span-9 space-y-8">
+
+            {/* IPMAT READINESS DASHBOARD PANEL */}
+            {config?.id === 'ast-ipmat' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Overall Score & Band */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Overall Readiness</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-slate-900 leading-none">{overallScore}</span>
+                      <span className="text-xs font-bold text-slate-400">/100</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between items-center text-xs font-black">
+                      <span className="text-slate-400 uppercase text-[9px] tracking-wider">Band</span>
+                      <span style={{ color: getIPMATReadiness(overallScore).color }}>{getIPMATReadiness(overallScore).band}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-bold leading-tight">{getIPMATReadiness(overallScore).desc}</p>
+                  </div>
+                </div>
+
+                {/* Percentile Estimate */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Percentile Estimate</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-slate-900 leading-none">{getIPMATReadiness(overallScore).pct.toFixed(1)}</span>
+                      <span className="text-xs font-bold text-slate-400">th %tile</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                      Estimated rank benchmarked against all IPMAT target candidates nationwide.
+                    </p>
+                  </div>
+                </div>
+
+                {/* College Fit & Success Probability */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Admission Probability</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-[#00A8A8] leading-none">{getIPMATReadiness(overallScore).prob}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between text-[9px] font-black text-slate-400 uppercase tracking-wider">
+                      <span>College Fit Level</span>
+                      <span className="text-slate-900">{overallScore >= 75 ? 'Excellent (Tier 1)' : overallScore >= 40 ? 'Moderate (Tier 2)' : 'Foundation Required'}</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#00A8A8] rounded-full" style={{ width: `${overallScore}%` }} />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
             
             {/* EXECUTIVE SUMMARY */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">

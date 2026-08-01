@@ -5,8 +5,8 @@ import { engineeringConfig } from '../configs/assessments/engineering';
 import { medicalConfig } from '../configs/assessments/medical';
 import { commerceConfig } from '../configs/assessments/commerce';
 import { managementConfig } from '../configs/assessments/management';
+import { ipmatConfig } from '../configs/assessments/ipmat';
 
-import { ipmatPlaceholder } from '../configs/future/ipmat';
 import { cuetPlaceholder } from '../configs/future/cuet';
 import { aiReadinessPlaceholder } from '../configs/future/ai-readiness';
 import { studyAbroadPlaceholder } from '../configs/future/study-abroad';
@@ -44,11 +44,11 @@ const activeAssessments: AssessmentConfig[] = [
   engineeringConfig,
   medicalConfig,
   commerceConfig,
-  managementConfig
+  managementConfig,
+  ipmatConfig
 ];
 
 const futurePlaceholders: AssessmentConfig[] = [
-  ipmatPlaceholder,
   cuetPlaceholder,
   aiReadinessPlaceholder,
   studyAbroadPlaceholder,
