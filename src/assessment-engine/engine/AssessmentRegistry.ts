@@ -84,7 +84,7 @@ export const AssessmentRegistry = {
   
   getById: (id: string): AssessmentConfig | undefined => {
     const slug = id.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return activeAssessments.find(a => a.id.toLowerCase() === id.toLowerCase() || a.id.toLowerCase().replace('ast-', '') === slug || a.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug) ||
-           futurePlaceholders.find(f => f.id.toLowerCase() === id.toLowerCase() || f.id.toLowerCase().replace('future-', '') === slug || f.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug);
+    return activeAssessments.find(a => a.id.toLowerCase() === id.toLowerCase() || a.id.toLowerCase().replace('ast-', '').replace('future-', '') === slug || a.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug) ||
+           futurePlaceholders.find(f => f.id.toLowerCase() === id.toLowerCase() || f.id.toLowerCase().replace('future-', '').replace('ast-', '') === slug || f.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug);
   }
 };
