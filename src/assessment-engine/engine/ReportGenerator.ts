@@ -115,6 +115,18 @@ export const ReportGenerator = {
               'Read daily editorials from standard newspapers (e.g., The Hindu, Aeon) to improve verbal reading speed.'
             ]
           };
+        case 'ast-cuet':
+          return {
+            summary: `The candidate has completed the CUET UG Readiness Diagnostic. Their scores map their baseline academic and general aptitude preparation level for central, state, and private universities accepting CUET scores.`,
+            weaknesses: [
+              'Refine speed in answering domain-specific advanced questions under tight timed constraints.',
+              'Revise current affairs timeline logs and logical puzzle structures.'
+            ],
+            growthAreas: [
+              'Solve dedicated stream mock question sets daily.',
+              'Optimize academic self-discipline and time management blocks.'
+            ]
+          };
         default:
           return {
             summary: `The candidate has completed the ${title} diagnostics. Their profile demonstrates high potential and suitability for growth in their chosen professional domain.`,
@@ -160,6 +172,30 @@ export const ReportGenerator = {
       ];
     }
 
+    if (config.id === 'ast-cuet') {
+      const sortedDims = [
+        { name: 'Language Proficiency', score: scores.dimensions.language || 0 },
+        { name: 'General Aptitude', score: scores.dimensions.generalAptitude || 0 },
+        { name: 'Domain Readiness', score: scores.dimensions.domainReadiness || 0 },
+        { name: 'Academic Skills', score: scores.dimensions.academicReadiness || 0 }
+      ].sort((a, b) => b.score - a.score);
+
+      strengths = [
+        `Highly competitive in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
+        `Solid foundations in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
+      ];
+
+      weaknesses = [
+        `Improve capabilities in ${sortedDims[3].name} (Score: ${sortedDims[3].score}%)`,
+        `Refine focus and timed practice in ${sortedDims[2].name} (Score: ${sortedDims[2].score}%)`
+      ];
+
+      growthAreas = [
+        `Target concepts in ${sortedDims[3].name} via structured daily revisions.`,
+        `Improve mock pacing and strategies for ${sortedDims[2].name} sections.`
+      ];
+    }
+
     const careerRecommendations = config.recommendedCareers?.map((c, i) => ({
       career: c,
       matchPercentage: scores.overallScore - i * 4,
@@ -197,7 +233,30 @@ export const ReportGenerator = {
           return ['Management Foundation Program', 'IPM Bridge Course', 'Quantitative Skill Improvement Plan'];
         }
       }
+      if (config.id === 'ast-cuet') {
+        if (scores.overallScore >= 75) {
+          return ['Delhi University (DU)', 'Banaras Hindu University (BHU)', 'Jawaharlal Nehru University (JNU)', 'University of Hyderabad', 'Pondicherry University', 'Central Universities'];
+        } else if (scores.overallScore >= 40) {
+          return ['State Universities accepting CUET', 'Top Private Universities', 'Autonomous College Panels'];
+        } else {
+          return ['Subject Foundation Program', 'Bridge Learning Course', 'Subject Strengthening Plan'];
+        }
+      }
       return ['Tier 1 Universities', 'Symbiosis Pune', 'BITS Pilani'];
+    };
+
+    const getSuggestedCourses = () => {
+      if (config.id === 'ast-cuet') {
+        const stream = answers.selectedStream || 'science';
+        if (stream === 'science') {
+          return ['B.Sc. Physics (Honours)', 'B.Sc. Computer Science', 'B.Tech / B.Sc. Mathematics'];
+        } else if (stream === 'commerce') {
+          return ['B.Com. (Honours)', 'B.A. Economics (Honours)', 'BBA in Business Analytics'];
+        } else {
+          return ['B.A. Political Science (Honours)', 'B.A. History (Honours)', 'B.A. Psychology & Sociology'];
+        }
+      }
+      return config.recommendedCourses || [];
     };
 
     // 3. Compile report object with rich schema properties
@@ -222,7 +281,7 @@ export const ReportGenerator = {
       weaknesses,
       growthAreas,
       careerRecommendations,
-      suggestedDegrees: config.recommendedCourses || [],
+      suggestedDegrees: getSuggestedCourses(),
       suggestedCertifications: [`${config.title} Certified Associate`],
       suggestedColleges: getSuggestedColleges(),
       skillGapAnalysis,

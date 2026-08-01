@@ -59,6 +59,70 @@ export const AssessmentScoring = {
       };
     }
     
+    // Custom scoring logic for CUET (exact percentage of correct answers + Likert for academic skills)
+    if (config.id === 'ast-cuet') {
+      const dimensions: Record<string, number> = {
+        language: 0,
+        generalAptitude: 0,
+        domainReadiness: 0,
+        academicReadiness: 0
+      };
+
+      questions.forEach(q => {
+        const dim = q.category; // maps to language, generalAptitude, domainReadiness, academicReadiness
+        if (dim in dimensions) {
+          if (!dimensions[`_total_${dim}`]) {
+            dimensions[`_total_${dim}`] = 0;
+            dimensions[`_correct_${dim}`] = 0;
+          }
+          const answerVal = answers[q.id];
+          
+          if (q.type === 'likert') {
+            // For academic skills (Likert)
+            dimensions[`_total_${dim}`] += 100; // max value representation
+            if (answerVal !== undefined && answerVal !== null) {
+              const val = Number(answerVal);
+              const percentage = (val - 1) * 25; // Scale 1-5 to 0-100
+              dimensions[`_correct_${dim}`] += percentage;
+            } else {
+              dimensions[`_correct_${dim}`] += 75; // default neutral baseline
+            }
+          } else {
+            // For single choice questions
+            dimensions[`_total_${dim}`]++;
+            if (answerVal === q.correctAnswer) {
+              dimensions[`_correct_${dim}`]++;
+            }
+          }
+        }
+      });
+
+      // Calculate final percentages
+      const activeDims = ['language', 'generalAptitude', 'domainReadiness', 'academicReadiness'];
+      let overallSum = 0;
+      activeDims.forEach(dim => {
+        if (dim === 'academicReadiness') {
+          const totalMax = dimensions[`_total_${dim}`] || 100;
+          const totalEarned = dimensions[`_correct_${dim}`] || 0;
+          dimensions[dim] = Math.max(30, Math.min(100, Math.round((totalEarned / totalMax) * 100)));
+        } else {
+          const total = dimensions[`_total_${dim}`] || 0;
+          const correct = dimensions[`_correct_${dim}`] || 0;
+          dimensions[dim] = total > 0 ? Math.max(30, Math.min(100, Math.round((correct / total) * 100))) : 75;
+        }
+        delete dimensions[`_total_${dim}`];
+        delete dimensions[`_correct_${dim}`];
+        overallSum += dimensions[dim];
+      });
+
+      const overallScore = Math.round(overallSum / activeDims.length);
+
+      return {
+        dimensions,
+        overallScore
+      };
+    }
+    
     // Initialize dimension scores
     const dimensions: Record<string, number> = {};
     

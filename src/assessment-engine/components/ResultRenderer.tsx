@@ -191,6 +191,66 @@ export const ResultRenderer: React.FC = () => {
 
               </div>
             )}
+
+            {/* CUET READINESS DASHBOARD PANEL */}
+            {config?.id === 'ast-cuet' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Overall Score & Band */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Overall CUET Readiness</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-slate-900 leading-none">{overallScore}</span>
+                      <span className="text-xs font-bold text-slate-400">/100</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between items-center text-xs font-black">
+                      <span className="text-slate-400 uppercase text-[9px] tracking-wider">Band</span>
+                      <span style={{ color: getIPMATReadiness(overallScore).color }}>{getIPMATReadiness(overallScore).band}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-bold leading-tight">{getIPMATReadiness(overallScore).desc}</p>
+                  </div>
+                </div>
+
+                {/* Percentile Estimate */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Percentile Estimate</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-slate-900 leading-none">{getIPMATReadiness(overallScore).pct.toFixed(1)}</span>
+                      <span className="text-xs font-bold text-slate-400">th %tile</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                      Estimated competitive rank benchmarked against all national CUET UG entrants.
+                    </p>
+                  </div>
+                </div>
+
+                {/* University Fit Meter & Target */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between text-left">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">University Fit Level</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-4xl font-black text-[#00A8A8] leading-none">{getIPMATReadiness(overallScore).prob}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-1.5">
+                    <div className="flex justify-between text-[9px] font-black text-slate-400 uppercase tracking-wider">
+                      <span>Admission Likelihood</span>
+                      <span className="text-slate-900">{overallScore >= 75 ? 'Top Universities (DU, BHU, JNU)' : overallScore >= 40 ? 'State/Private' : 'Strengthening Required'}</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#00A8A8] rounded-full" style={{ width: `${overallScore}%` }} />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
             
             {/* EXECUTIVE SUMMARY */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
@@ -235,6 +295,41 @@ export const ResultRenderer: React.FC = () => {
                 })}
               </div>
             </div>
+
+            {/* CUET SUBJECT HEAT MAP */}
+            {config?.id === 'ast-cuet' && (
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-4">
+                <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
+                  <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest">
+                    CUET Subject Readiness Heat Map
+                  </h3>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Interactive Grid</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {template.dimensions.map((d: any) => {
+                    const val = report?.scores 
+                      ? (report.scores as any)[d.key] || 75 
+                      : 75;
+                    const getHeatBg = (score: number) => {
+                      if (score >= 90) return 'bg-emerald-55/40 border-emerald-200 text-emerald-800';
+                      if (score >= 75) return 'bg-teal-50 border-teal-200 text-teal-800';
+                      if (score >= 60) return 'bg-sky-50 border-sky-200 text-sky-800';
+                      if (score >= 40) return 'bg-amber-50 border-amber-200 text-amber-800';
+                      return 'bg-rose-50 border-rose-200 text-rose-800';
+                    };
+                    return (
+                      <div key={d.key} className={`p-4 rounded-2xl border text-center space-y-1 ${getHeatBg(val)}`}>
+                        <span className="text-[9px] font-black uppercase tracking-wider block opacity-75">{d.label}</span>
+                        <div className="text-2xl font-black">{val}%</div>
+                        <span className="text-[8px] font-bold uppercase tracking-wider block opacity-75">
+                          {val >= 90 ? 'Excellent' : val >= 75 ? 'Very Good' : val >= 60 ? 'Good' : val >= 40 ? 'Average' : 'Needs Work'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* STRENGTHS AND WEAKNESSES */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -29,13 +29,37 @@ export const AssessmentLayout: React.FC = () => {
   const [flagged, setFlagged] = useState<Record<string, boolean>>({});
   const [timeLeft, setTimeLeft] = useState(1800); // default 30 mins
   
-  const [engineStep, setEngineStep] = useState<'instructions' | 'test' | 'review' | 'processing' | 'success'>('instructions');
+  const [engineStep, setEngineStep] = useState<'instructions' | 'stream-select' | 'test' | 'review' | 'processing' | 'success'>('instructions');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingStepIndex, setProcessingStepIndex] = useState(0);
   const [finalReport, setFinalReport] = useState<any>(null);
   
   const timerRef = useRef<any>(null);
+  
+  const [selectedStream, setSelectedStream] = useState<string>('');
+
+  const handleStreamSelect = (stream: 'science' | 'commerce' | 'humanities') => {
+    setSelectedStream(stream);
+    // Filter questions based on the stream selection
+    const fullQuestions = QuestionLoader.loadQuestions(config!);
+    const filtered = fullQuestions.filter(q => {
+      // Keep Language Proficiency
+      if (q.id.startsWith('q-cuet-lang-')) return true;
+      // Keep General Aptitude
+      if (q.id.startsWith('q-cuet-gen-')) return true;
+      // Keep Academic Skills
+      if (q.id.startsWith('q-cuet-acad-')) return true;
+      // Dynamic Domain filter
+      if (stream === 'science' && q.id.startsWith('q-cuet-sci-')) return true;
+      if (stream === 'commerce' && q.id.startsWith('q-cuet-comm-')) return true;
+      if (stream === 'humanities' && q.id.startsWith('q-cuet-hum-')) return true;
+      return false;
+    });
+    setQuestions(filtered);
+    setAnswers(prev => ({ ...prev, selectedStream: stream }));
+    setEngineStep('test');
+  };
 
   const processingSteps = [
     'Scoring psychometric items...',
@@ -209,12 +233,60 @@ export const AssessmentLayout: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => setEngineStep('test')}
+                onClick={() => {
+                  if (config.id === 'ast-cuet') {
+                    setEngineStep('stream-select');
+                  } else {
+                    setEngineStep('test');
+                  }
+                }}
                 className="w-full py-3.5 rounded-xl text-xs font-bold text-white shadow-md hover:scale-[1.01] transition-transform cursor-pointer text-center"
                 style={{ backgroundColor: config.themeColor }}
               >
                 Start Assessment
               </button>
+            </motion.div>
+          )}
+
+          {/* STEP 1.5: STREAM SELECT VIEW (CUET ONLY) */}
+          {engineStep === 'stream-select' && (
+            <motion.div
+              key="stream-select"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="max-w-2xl mx-auto bg-white border border-slate-200 p-6 sm:p-10 rounded-3xl shadow-sm space-y-6 text-left"
+            >
+              <div className="text-center space-y-3">
+                <div className="h-16 w-16 rounded-2xl bg-brand-pink text-brand-red flex items-center justify-center mx-auto">
+                  <Icons.Compass className="h-8 w-8 text-[#00A8A8]" />
+                </div>
+                <h2 className="text-xl font-black text-slate-900 leading-none">Select Your Intended Stream</h2>
+                <p className="text-xs text-slate-500 font-bold max-w-sm mx-auto mt-1 leading-relaxed">
+                  This customizes your domain readiness questions to align with your academic target field.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                {[
+                  { value: 'science', title: 'Science Stream', desc: 'Physics, Chemistry, Mathematics, Biology, Computer Science' },
+                  { value: 'commerce', title: 'Commerce Stream', desc: 'Accountancy, Business Studies, Economics, Mathematics, Entrepreneurship' },
+                  { value: 'humanities', title: 'Humanities Stream', desc: 'History, Political Science, Geography, Psychology, Sociology, Economics' }
+                ].map((str) => (
+                  <button
+                    key={str.value}
+                    type="button"
+                    onClick={() => handleStreamSelect(str.value as any)}
+                    className="flex flex-col justify-between p-5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-[#00A8A8] transition-all text-left cursor-pointer group"
+                  >
+                    <div>
+                      <h4 className="text-xs font-black text-slate-900 group-hover:text-[#00A8A8] transition-colors leading-tight">{str.title}</h4>
+                      <p className="text-[10px] text-slate-500 font-semibold leading-tight mt-2">{str.desc}</p>
+                    </div>
+                    <span className="text-[9px] font-black text-[#00A8A8] uppercase tracking-wider mt-4 block">Select Stream →</span>
+                  </button>
+                ))}
+              </div>
             </motion.div>
           )}
 
