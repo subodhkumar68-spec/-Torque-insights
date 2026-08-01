@@ -5,6 +5,7 @@ import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } fro
 import studentAssessment from '../../assets/student_assessment.jpg';
 import studentCollaboration from '../../assets/student_collaboration.jpg';
 import studentGraduate from '../../assets/student_graduate.jpg';
+import academicCampusBg from '../../assets/academic_campus_bg.jpg';
 import { 
   Sparkles, BrainCircuit, GraduationCap, ClipboardCheck, ArrowRight, 
   Star, ChevronDown, Check, Building, BookOpen, Key, Users, 
@@ -41,155 +42,282 @@ export const Home: React.FC = () => {
   return (
     <div className="relative overflow-hidden bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       
-      {/* Background ambient lighting and faint grid pattern */}
-      <div className="absolute top-0 left-0 right-0 -z-10 h-[900px] w-full bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(198,40,40,0.06),rgba(255,255,255,0))]" />
-      <div className="absolute top-[15%] left-[-15%] -z-10 h-[500px] w-[500px] rounded-full bg-red-50/20 blur-3xl" />
-      <div className="absolute top-[30%] right-[-10%] -z-10 h-[400px] w-[400px] rounded-full bg-slate-100/50 blur-3xl" />
+      {/* Immersive Academic Grid Background */}
+      <div className="absolute inset-0 bg-dot-grid -z-10 pointer-events-none" />
 
-      {/* Faint neural particles background simulation */}
-      <svg className="absolute inset-0 w-full h-[800px] -z-10 opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 100 100 Q 300 150 500 100 T 900 120" fill="none" stroke="#C62828" strokeWidth="2" strokeDasharray="5,5" />
-        <path d="M 200 400 Q 500 350 700 450 T 1100 400" fill="none" stroke="#C62828" strokeWidth="2" strokeDasharray="5,5" />
-        <circle cx="100" cy="100" r="3" fill="#C62828" />
-        <circle cx="500" cy="100" r="3" fill="#C62828" />
-        <circle cx="900" cy="120" r="3" fill="#C62828" />
-        <circle cx="200" cy="400" r="3" fill="#C62828" />
-        <circle cx="700" cy="450" r="3" fill="#C62828" />
-      </svg>
+      {/* Cinematic Campus Background Image with Gradient Overlay */}
+      <div className="absolute top-0 left-0 right-0 -z-20 h-[820px] w-full overflow-hidden pointer-events-none">
+        <img
+          src={academicCampusBg}
+          alt="Torque Insights University Campus Backdrop"
+          className="w-full h-full object-cover opacity-15 mix-blend-multiply dark:mix-blend-normal dark:opacity-[0.06] transition-opacity duration-300"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-white dark:from-slate-950 dark:via-slate-950/90 dark:to-slate-950" />
+      </div>
 
-      {/* HERO SECTION */}
-      <section className="mx-auto max-w-7xl px-4 pt-20 pb-12 sm:px-6 lg:px-8 lg:pt-28">
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 items-center">
+      {/* Royal Blue & Teal Soft Ambient Glows */}
+      <div className="absolute top-[10%] right-[10%] -z-10 h-[500px] w-[500px] rounded-full bg-[#00A8A8]/10 blur-[130px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[20%] left-[-10%] -z-10 h-[500px] w-[500px] rounded-full bg-[#0F4C81]/15 blur-[160px] pointer-events-none" />
+
+      {/* FULL WIDTH HERO SECTION (100% Viewport Width, 100vh Min Height Layout) */}
+      <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-8 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl w-full grid grid-cols-1 gap-16 lg:grid-cols-12 items-center">
           
-          {/* LEFT COLUMN: Copywriting, CTAs, and Checks */}
+          {/* LEFT COLUMN: Harvard/Stanford Copywriting & Academic Formatting */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:col-span-6 space-y-6 text-center lg:text-left"
           >
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-pink border border-red-100 px-3.5 py-1.5 text-xs font-bold text-brand-red">
-              <Sparkles className="h-4 w-4" />
-              Torque Insights · Shape Your Future
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#0F4C81]/10 dark:bg-[#00A8A8]/10 border border-[#0F4C81]/20 px-3.5 py-1.5 text-xs font-black text-[#0F4C81] dark:text-[#00A8A8] uppercase tracking-wider">
+              <Sparkles className="h-3.5 w-3.5" />
+              Torque Insights · Academic & AI Diagnostics Portal
             </div>
             
-            <h1 className="font-sans text-5xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-[60px] leading-[1.05]">
-              Discover Your <br />
-              <span className="text-brand-red">True Potential</span> <br />
-              with AI-Powered <br />
+            <h1 className="font-sans text-4xl sm:text-5xl lg:text-[56px] font-black tracking-tight text-[#0F4C81] dark:text-white leading-[1.08]">
+              Transform Student Potential <br />
+              Through <span className="text-[#00A8A8]">Scientific</span> <br />
               Career Intelligence
             </h1>
             
-            <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-              Scientifically designed psychometric assessments combined with artificial intelligence to help students, professionals, schools, and organizations make smarter academic and career decisions.
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+              World-class AI-powered psychometric mapping, cognitive evaluations, and course-stream diagnostics. Specially built to guide students, schools, colleges, counselors, and corporate groups with downloadable career roadmap blueprints.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2">
               <Link
                 to="/assessments"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-red px-8 py-4 text-base font-bold text-white shadow-lg shadow-red-500/20 hover:bg-brand-redhover hover:scale-[1.02] active:scale-[0.99] transition-all duration-200 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#00A8A8] hover:bg-[#0D9488] px-8 py-4 text-base font-black text-white shadow-xl shadow-teal-500/20 hover:scale-[1.02] active:scale-[0.99] transition-all duration-200 cursor-pointer"
               >
                 Start Free Assessment
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <button
-                onClick={() => alert("Booking demo consultation...")}
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-200 bg-white px-8 py-4 text-base font-bold text-slate-700 hover:bg-slate-50 hover:scale-[1.02] active:scale-[0.99] transition-all duration-200 cursor-pointer"
+              <Link
+                to="/report"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-350 dark:border-slate-700 bg-white dark:bg-slate-900 px-8 py-4 text-base font-black text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-[1.02] active:scale-[0.99] transition-all duration-200 cursor-pointer"
               >
-                <Calendar className="h-4.5 w-4.5" />
-                Book a Demo
-              </button>
+                <Compass className="h-4.5 w-4.5" />
+                View Sample AI Report
+              </Link>
             </div>
 
-            {/* Verification Features Row */}
-            <div className="pt-6 flex flex-wrap justify-center lg:justify-start items-center gap-4 text-xs font-bold text-slate-500">
+            {/* Premium Trust Badges */}
+            <div className="pt-6 flex flex-wrap justify-center lg:justify-start items-center gap-4 text-xs font-black text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-1.5">
-                <span className="text-brand-red font-black">✓</span>
-                <span>AI-Powered Analysis</span>
+                <span className="text-[#00A8A8] text-base">✔</span>
+                <span>AI Powered</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-brand-red font-black">✓</span>
-                <span>Scientifically Designed Assessments</span>
+                <span className="text-[#00A8A8] text-base">✔</span>
+                <span>Psychometric Integrity</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-brand-red font-black">✓</span>
-                <span>Trusted Career Recommendations</span>
+                <span className="text-[#00A8A8] text-base">✔</span>
+                <span>Downloadable Reports</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#00A8A8] text-base">✔</span>
+                <span>School Ready</span>
               </div>
             </div>
           </motion.div>
 
-          {/* RIGHT COLUMN: Re-designed Premium Hero Showcase */}
+          {/* RIGHT COLUMN: Interactive Live Glassmorphic Dashboard Showcase */}
           <div className="lg:col-span-6 relative flex justify-center items-center py-10 min-h-[620px]">
-            {/* Ambient Background Glows */}
-            <div className="absolute inset-0 flex items-center justify-center -z-10">
-              <div className="h-[450px] w-[450px] rounded-full bg-brand-pink/10 blur-3xl animate-pulse" />
-              <div className="absolute h-[320px] w-[320px] rounded-full bg-red-100/10 blur-2xl" />
-            </div>
-
-            {/* Dashboard Mockup Container */}
-            <div className="relative w-full max-w-lg p-2 bg-slate-100/50 border border-slate-200/50 rounded-[2.5rem] shadow-2xl shadow-red-500/5 overflow-hidden transition-all duration-300 hover:scale-[1.01]">
-              <img
-                src="/src/assets/career_dashboard_mockup.jpg"
-                alt="Torque Insights Diagnostics Dashboard"
-                className="w-full h-auto rounded-[2.2rem] shadow-lg object-cover"
-              />
-              
-              {/* Glassmorphic Overlay Reflection */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none rounded-[2.5rem]" />
-            </div>
-
-            {/* OVERLAPPING FLOATING STATS BADGES (Glassmorphic & Modern) */}
             
-            {/* Badge 1: Personality Match (Top Left) */}
-            <motion.div 
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              className="absolute -top-4 left-4 w-40 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
-            >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Personality Profile</p>
-              <h4 className="text-sm font-black text-brand-red mt-1.5 leading-none">INTJ (Architect)</h4>
-              <p className="text-[9px] font-bold text-slate-500 mt-1.5 leading-none">94% Role compatibility</p>
-            </motion.div>
+            {/* Dashboard Visual Frame */}
+            <div className="relative w-full max-w-[480px] bg-white/70 dark:bg-slate-900/60 border border-slate-200/50 dark:border-slate-800/60 rounded-[2rem] p-6 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.01]">
+              
+              {/* Profile Card Header */}
+              <div className="flex justify-between items-start border-b border-slate-200/40 dark:border-slate-800/40 pb-4">
+                <div className="flex gap-3 items-center">
+                  <div className="h-10 w-10 rounded-full bg-[#0F4C81]/10 flex items-center justify-center text-[#0F4C81] dark:text-teal-400 font-black text-sm">
+                    SJ
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-sm font-black text-slate-900 dark:text-white leading-none">Sarah Jenkins</h3>
+                    <p className="text-[10px] font-bold text-slate-500 mt-1">High School Student · Class XII</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="rounded bg-teal-500/10 text-teal-650 dark:text-teal-400 px-2 py-0.5 text-[9px] font-black tracking-wider leading-none">INTJ (Architect)</span>
+                  <span className="rounded bg-[#0F4C81]/10 text-[#0F4C81] dark:text-[#38BDF8] px-2 py-0.5 text-[9px] font-black tracking-wider leading-none">Visual Learner</span>
+                </div>
+              </div>
 
-            {/* Badge 2: Career Suitability (Bottom Right) */}
+              {/* Chart & Career Fit Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 items-center">
+                
+                {/* Embedded dynamic Radar chart */}
+                <div className="h-44 w-full flex items-center justify-center bg-transparent">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                      <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 8, fontWeight: 'bold' }} />
+                      <Radar name="Candidate" dataKey="score" stroke="#00A8A8" fill="#00A8A8" fillOpacity={0.25} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Score tracks list */}
+                <div className="space-y-2.5 text-left">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Target Stream Suitability</p>
+                  <div className="space-y-2">
+                    {[
+                      { name: 'Engineering Fit', score: 94, color: '#00A8A8' },
+                      { name: 'Management Fit', score: 89, color: '#0F4C81' },
+                      { name: 'Commerce Fit', score: 85, color: '#38BDF8' },
+                      { name: 'Medical Career Fit', score: 72, color: '#94A3B8' },
+                      { name: 'Humanities Career Fit', score: 60, color: '#CBD5E1' }
+                    ].map((track, idx) => (
+                      <div key={idx} className="space-y-1">
+                        <div className="flex justify-between text-[9px] font-bold text-slate-700 dark:text-slate-300">
+                          <span>{track.name}</span>
+                          <span>{track.score}%</span>
+                        </div>
+                        <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${track.score}%` }}
+                            transition={{ duration: 1.5, delay: idx * 0.15 }}
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: track.color }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Action and AI Insight Bar */}
+              <div className="mt-4 pt-4 border-t border-slate-200/40 dark:border-slate-800/40 flex flex-col gap-3">
+                <div className="bg-[#ECFDF5]/80 dark:bg-[#1E293B]/60 border border-emerald-500/10 dark:border-emerald-500/20 rounded-2xl p-3 text-left">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                    <p className="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-wider leading-none">AI Resolution Insight</p>
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-600 dark:text-slate-350 mt-1 leading-relaxed">
+                    Optimal tracks mapped: STEM / Strategic Management. Candidate displays high spatial deduction and abstract reasoning scores.
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <button onClick={() => navigate('/assessments')} className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#00A8A8] text-white px-4 py-2.5 text-xs font-black shadow-lg shadow-teal-500/10 hover:bg-[#0D9488] active:scale-[0.98] transition-all cursor-pointer">
+                    <Compass className="h-3.5 w-3.5" />
+                    Assess Career Fit
+                  </button>
+                  <button onClick={() => navigate('/report')} className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-350 px-4 py-2.5 text-xs font-black hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.98] transition-all cursor-pointer">
+                    <Award className="h-3.5 w-3.5" />
+                    Download PDF
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Orbiting dynamic widgets and seals */}
             <motion.div 
               animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
-              className="absolute -bottom-6 right-2 w-48 rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-2xl z-20 text-left"
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              className="absolute -top-4 -right-8 w-36 rounded-2xl border border-slate-200/50 bg-white/95 dark:bg-slate-900/95 p-3 shadow-xl backdrop-blur-md z-20 text-left"
             >
-              <span className="rounded bg-red-500/20 text-red-400 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider">Top Stream Fit</span>
-              <h4 className="text-xs font-black text-white mt-2 leading-none">Strategy Consultant</h4>
-              <p className="text-[10px] text-slate-455 font-bold mt-1.5 leading-none">96% Suitability Index</p>
+              <p className="text-[8px] font-black text-[#0F4C81] dark:text-[#38BDF8] uppercase tracking-widest leading-none">Diagnostic Fit</p>
+              <h4 className="text-xs font-black text-slate-900 dark:text-white mt-1.5 leading-none">Stanford Global</h4>
+              <p className="text-[9px] font-semibold text-slate-400 mt-1 leading-none">94% Fit compatibility</p>
             </motion.div>
 
-            {/* Badge 3: Leadership Rating (Middle Right) */}
             <motion.div 
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-              className="absolute top-[25%] -right-8 w-36 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+              className="absolute top-[35%] -left-10 w-38 rounded-2xl border border-slate-200/50 bg-white/95 dark:bg-slate-900/95 p-3.5 shadow-xl backdrop-blur-md z-20 text-left"
             >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Leadership Score</p>
-              <div className="flex items-baseline gap-0.5 mt-1 leading-none">
-                <span className="text-lg font-black text-slate-950">89</span>
-                <span className="text-[9px] font-bold text-slate-400">/100</span>
+              <p className="text-[8px] font-black text-[#00A8A8] uppercase tracking-widest leading-none">Aptitude Score</p>
+              <div className="flex items-baseline gap-0.5 mt-1.5 leading-none">
+                <span className="text-base font-black text-slate-950 dark:text-white">98</span>
+                <span className="text-[8px] font-bold text-slate-400">/100</span>
               </div>
-              <p className="text-[9px] text-emerald-600 font-bold mt-1 leading-none">Top Executive decile</p>
+              <p className="text-[9px] text-emerald-600 font-bold mt-1 leading-none">Exceptional decile</p>
             </motion.div>
 
-            {/* Badge 4: Cognitive VARK (Middle Left) */}
             <motion.div 
-              animate={{ y: [0, -7, 0] }}
-              transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
-              className="absolute bottom-[20%] -left-8 w-36 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              className="absolute -bottom-6 -left-4 w-36 rounded-2xl border border-slate-200/50 bg-white/95 dark:bg-slate-900/95 p-3 shadow-xl backdrop-blur-md z-20 text-left"
             >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Learning Style</p>
-              <h4 className="text-xs font-black text-slate-950 mt-1.5 leading-none">Visual Learner</h4>
-              <p className="text-[9px] text-brand-red font-bold mt-1 leading-none">88% efficiency index</p>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse" />
+              <span className="text-[8px] font-black text-slate-450 uppercase tracking-widest leading-none">System Status</span>
+              <h4 className="text-[10px] font-black text-slate-900 dark:text-white mt-1.5 leading-none">Report Compiled</h4>
             </motion.div>
+
           </div>
 
         </div>
       </section>
+
+      {/* STATISTICS METRICS BAR */}
+      <div className="w-full bg-white dark:bg-slate-950 py-10 transition-colors duration-300">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center border-t border-slate-200/50 dark:border-slate-800/50 pt-10">
+            {[
+              { stat: '35+', label: 'Career Assessments', sub: 'Comprehensive domains' },
+              { stat: '50,000+', label: 'Students Guided', sub: 'Across 15 countries' },
+              { stat: '500+', label: 'Partner Schools', sub: 'Colleges & universities' },
+              { stat: '98%', label: 'Student Satisfaction', sub: 'Verified recommendations' },
+              { stat: 'AI Powered', label: 'Career Reports', sub: 'Blueprints resolved' }
+            ].map((metric, idx) => (
+              <div key={idx} className="space-y-1">
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0F4C81] dark:text-[#00A8A8]">{metric.stat}</h3>
+                <p className="text-xs font-black text-slate-800 dark:text-white leading-none">{metric.label}</p>
+                <p className="text-[10px] text-slate-400 font-bold mt-1 leading-none">{metric.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* SOCIAL PROOF: SCROLLING UNIVERSITY & SCHOOL LOGOS MARQUEE */}
+      <div className="w-full bg-slate-50/50 dark:bg-slate-900/20 border-y border-slate-200/40 dark:border-slate-800/40 py-6 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 flex items-center gap-6">
+          <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest shrink-0">TRUSTED ACROSS</span>
+          <div className="relative w-full overflow-hidden">
+            <div className="animate-marquee flex gap-12 items-center">
+              {[
+                { name: 'Stanford College of Adv Studies', icon: GraduationCap },
+                { name: 'Delhi Public School (DPS)', icon: Building },
+                { name: 'Oxford Global Prep Academy', icon: BookOpen },
+                { name: 'MIT Tech Labs', icon: BrainCircuit },
+                { name: 'Kendriya Vidyalaya (KVS)', icon: Building },
+                { name: 'Harvard Club Education Network', icon: GraduationCap },
+                { name: 'National Institute of Education', icon: BookOpen },
+                { name: 'DAV Public School', icon: Building },
+              ].map((logo, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-slate-400 dark:text-slate-600 font-black tracking-wide text-xs uppercase hover:text-slate-500 transition-colors">
+                  <logo.icon className="h-4 w-4 shrink-0" />
+                  <span>{logo.name}</span>
+                </div>
+              ))}
+              {[
+                { name: 'Stanford College of Adv Studies', icon: GraduationCap },
+                { name: 'Delhi Public School (DPS)', icon: Building },
+                { name: 'Oxford Global Prep Academy', icon: BookOpen },
+                { name: 'MIT Tech Labs', icon: BrainCircuit },
+                { name: 'Kendriya Vidyalaya (KVS)', icon: Building },
+                { name: 'Harvard Club Education Network', icon: GraduationCap },
+                { name: 'National Institute of Education', icon: BookOpen },
+                { name: 'DAV Public School', icon: Building },
+              ].map((logo, idx) => (
+                <div key={`dup-${idx}`} className="flex items-center gap-2 text-slate-400 dark:text-slate-600 font-black tracking-wide text-xs uppercase hover:text-slate-500 transition-colors">
+                  <logo.icon className="h-4 w-4 shrink-0" />
+                  <span>{logo.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* STUDENT SUCCESS SHOWCASE */}
       <section className="bg-slate-50/50 dark:bg-slate-900/50 py-16 transition-colors duration-300">

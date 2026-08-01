@@ -123,3 +123,37 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-primary);
 }
+
+/* Redesigned Hero Theme & Animations */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(15, 76, 129, 0.08) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
