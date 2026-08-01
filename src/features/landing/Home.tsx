@@ -118,181 +118,74 @@ export const Home: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* RIGHT COLUMN: Premium Vertical Flowchart & Floating Cards */}
+          {/* RIGHT COLUMN: Re-designed Premium Hero Showcase */}
           <div className="lg:col-span-6 relative flex justify-center items-center py-10 min-h-[620px]">
-            
-            {/* Ambient Background Circles */}
+            {/* Ambient Background Glows */}
             <div className="absolute inset-0 flex items-center justify-center -z-10">
-              <div className="h-[450px] w-[450px] rounded-full border border-slate-100 animate-pulse" />
-              <div className="absolute h-[320px] w-[320px] rounded-full border border-slate-200/50" />
+              <div className="h-[450px] w-[450px] rounded-full bg-brand-pink/10 blur-3xl animate-pulse" />
+              <div className="absolute h-[320px] w-[320px] rounded-full bg-red-100/10 blur-2xl" />
             </div>
 
-            {/* central flow track */}
-            <div className="relative flex flex-col items-center gap-12 w-full max-w-sm">
+            {/* Dashboard Mockup Container */}
+            <div className="relative w-full max-w-lg p-2 bg-slate-100/50 border border-slate-200/50 rounded-[2.5rem] shadow-2xl shadow-red-500/5 overflow-hidden transition-all duration-300 hover:scale-[1.01]">
+              <img
+                src="/src/assets/career_dashboard_mockup.jpg"
+                alt="Torque Insights Diagnostics Dashboard"
+                className="w-full h-auto rounded-[2.2rem] shadow-lg object-cover"
+              />
               
-              {/* Glowing vertical line mapping the pipeline */}
-              <div className="absolute top-6 bottom-6 w-0.5 bg-gradient-to-b from-slate-200 via-brand-red to-slate-200 -z-10 shadow-lg shadow-red-500/50" />
-
-              {/* Node 1: Student */}
-              <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-5 py-2.5 shadow-sm z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 text-xs font-black shrink-0">
-                  👤
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Input Profile</p>
-                  <p className="text-xs font-black text-slate-800">Student Input</p>
-                </div>
-              </div>
-
-              {/* Node 2: Psychometric Assessment */}
-              <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-5 py-2.5 shadow-sm z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-pink text-brand-red shrink-0">
-                  <ClipboardCheck className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-brand-red uppercase tracking-wider">Step 2: Testing</p>
-                  <p className="text-xs font-black text-slate-800">Psychometric Assessment</p>
-                </div>
-              </div>
-
-              {/* Node 3: AI Brain */}
-              <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-full px-5 py-2.5 shadow-lg shadow-red-500/10 z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-red text-white shrink-0">
-                  <BrainCircuit className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-red-400 uppercase tracking-wider">Step 3: Neural mapping</p>
-                  <p className="text-xs font-black text-white">AI Brain</p>
-                </div>
-              </div>
-
-              {/* Node 4: Career Intelligence Engine */}
-              <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-5 py-2.5 shadow-sm z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-pink text-brand-red shrink-0">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-brand-red uppercase tracking-wider">Step 4: Calculations</p>
-                  <p className="text-xs font-black text-slate-800">Career Intelligence Engine</p>
-                </div>
-              </div>
-
-              {/* Node 5: Personalized Insights */}
-              <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-5 py-2.5 shadow-sm z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-pink text-brand-red shrink-0">
-                  <Award className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-brand-red uppercase tracking-wider">Step 5: Diagnostics</p>
-                  <p className="text-xs font-black text-slate-800">Personalized Insights</p>
-                </div>
-              </div>
-
-              {/* Node 6: Future Professional */}
-              <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-5 py-2.5 shadow-sm z-10 w-60">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 shrink-0">
-                  <GraduationCap className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Goal Aligned</p>
-                  <p className="text-xs font-black text-slate-800">Future Professional</p>
-                </div>
-              </div>
-
+              {/* Glassmorphic Overlay Reflection */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none rounded-[2.5rem]" />
             </div>
 
-            {/* FLOATING ANALYTICS CARDS (Glassmorphic) */}
+            {/* OVERLAPPING FLOATING STATS BADGES (Glassmorphic & Modern) */}
             
-            {/* Card 1: Personality Match */}
-            <motion.div 
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              className="absolute top-2 -left-8 w-36 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
-            >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Personality Match</p>
-              <p className="text-sm font-black text-brand-red mt-0.5">INTJ</p>
-              <p className="text-[9px] font-bold text-slate-500">94% Architect fit</p>
-            </motion.div>
-
-            {/* Card 2: Leadership Score */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-              className="absolute top-[20%] -right-8 w-36 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
-            >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Leadership Score</p>
-              <div className="flex items-baseline gap-1 mt-0.5">
-                <span className="text-lg font-black text-slate-900">89</span>
-                <span className="text-[10px] font-bold text-slate-400">/100</span>
-              </div>
-              <p className="text-[9px] text-emerald-600 font-bold">Top Executive decile</p>
-            </motion.div>
-
-            {/* Card 3: Career Fit */}
+            {/* Badge 1: Personality Match (Top Left) */}
             <motion.div 
               animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
-              className="absolute top-[42%] -left-12 w-44 rounded-2xl border border-slate-200/60 bg-slate-900 p-3 shadow-lg z-20"
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              className="absolute -top-4 left-4 w-40 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
             >
-              <p className="text-[8px] font-black text-red-400 uppercase tracking-widest">Career Fit</p>
-              <p className="text-xs font-black text-white mt-0.5">Strategy Consultant</p>
-              <p className="text-[9px] text-brand-red font-bold">96% Suitability Index</p>
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Personality Profile</p>
+              <h4 className="text-sm font-black text-brand-red mt-1.5 leading-none">INTJ (Architect)</h4>
+              <p className="text-[9px] font-bold text-slate-500 mt-1.5 leading-none">94% Role compatibility</p>
             </motion.div>
 
-            {/* Card 4: Learning Style */}
+            {/* Badge 2: Career Suitability (Bottom Right) */}
             <motion.div 
               animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute top-[58%] -right-12 w-36 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
+              className="absolute -bottom-6 right-2 w-48 rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-2xl z-20 text-left"
             >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Learning Style</p>
-              <p className="text-xs font-black text-slate-800 mt-0.5">Visual Learner</p>
-              <p className="text-[9px] text-brand-red font-bold">88% efficiency index</p>
+              <span className="rounded bg-red-500/20 text-red-400 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider">Top Stream Fit</span>
+              <h4 className="text-xs font-black text-white mt-2 leading-none">Strategy Consultant</h4>
+              <p className="text-[10px] text-slate-455 font-bold mt-1.5 leading-none">96% Suitability Index</p>
             </motion.div>
 
-            {/* Card 5: Employability Index */}
+            {/* Badge 3: Leadership Rating (Middle Right) */}
             <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.1 }}
-              className="absolute bottom-[20%] -left-8 w-40 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+              className="absolute top-[25%] -right-8 w-36 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
             >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Employability Index</p>
-              <p className="text-xs font-black text-slate-800 mt-0.5">Top Decile Index</p>
-              <p className="text-[9px] text-slate-400 font-bold">Verified MNC benchmark</p>
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Leadership Score</p>
+              <div className="flex items-baseline gap-0.5 mt-1 leading-none">
+                <span className="text-lg font-black text-slate-950">89</span>
+                <span className="text-[9px] font-bold text-slate-400">/100</span>
+              </div>
+              <p className="text-[9px] text-emerald-600 font-bold mt-1 leading-none">Top Executive decile</p>
             </motion.div>
 
-            {/* Card 6: Communication Skills */}
+            {/* Badge 4: Cognitive VARK (Middle Left) */}
             <motion.div 
               animate={{ y: [0, -7, 0] }}
-              transition={{ duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 2.0 }}
-              className="absolute bottom-[2%] -right-6 w-38 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
+              transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
+              className="absolute bottom-[20%] -left-8 w-36 rounded-2xl border border-slate-200 bg-white/95 p-3.5 shadow-xl shadow-slate-100 backdrop-blur-md z-20 text-left"
             >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Communication Skills</p>
-              <p className="text-xs font-black text-slate-800 mt-0.5">Exemplary Rating</p>
-              <p className="text-[9px] text-brand-red font-bold">94th percentile</p>
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Learning Style</p>
+              <h4 className="text-xs font-black text-slate-950 mt-1.5 leading-none">Visual Learner</h4>
+              <p className="text-[9px] text-brand-red font-bold mt-1 leading-none">88% efficiency index</p>
             </motion.div>
-
-            {/* Card 7: Confidence Level */}
-            <motion.div 
-              animate={{ y: [0, -9, 0] }}
-              transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 1.6 }}
-              className="absolute -bottom-8 -left-4 w-36 rounded-2xl border border-slate-200/60 bg-white/80 p-3 shadow-lg backdrop-blur-md z-20"
-            >
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Confidence Level</p>
-              <p className="text-xs font-black text-slate-800 mt-0.5">Exceptional</p>
-              <p className="text-[9px] text-emerald-600 font-bold">90% Rating score</p>
-            </motion.div>
-
-            {/* Card 8: Career Readiness */}
-            <motion.div 
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 2.3 }}
-              className="absolute top-[32%] right-[10%] w-36 rounded-2xl border border-red-100 bg-red-50 p-2 text-center shadow-md z-20"
-            >
-              <span className="text-[8px] font-black text-brand-red uppercase tracking-widest">Career Readiness</span>
-              <p className="text-[10px] font-black text-brand-slate mt-0.5">Live placement fit</p>
-            </motion.div>
-
           </div>
 
         </div>
