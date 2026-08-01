@@ -1,16 +1,32 @@
 export const learningStyleQuestions = [
-  { id: 'q-learn-1', type: 'single' as const, prompt: 'When trying to remember directions to a new place, you prefer:', options: [
-    { value: 'V', label: 'Viewing a visual roadmap highlight of the paths.', weights: { V: 3 } },
-    { value: 'A', label: 'Listening to verbal audio instructions repeated step-by-step.', weights: { A: 3 } },
-    { value: 'R', label: 'Reading a written list of streets and street numbers.', weights: { R: 3 } },
-    { value: 'K', label: 'Driving or walking through the route once to build body memory.', weights: { K: 3 } }
-  ]},
-  ...Array.from({ length: 24 }).map((_, i) => ({
-    id: `q-learn-gen-${i + 2}`,
-    type: 'likert' as const,
-    prompt: `[Learning Scale #${i + 1}] I remember information better when it is presented in visual formats (charts, flow diagrams, videos).`,
-    minLabel: 'Strongly Disagree',
-    maxLabel: 'Strongly Agree',
-    weights: { V: 2 }
-  }))
+  { id: 'q-learn-1', type: 'likert' as const, prompt: 'I remember information better when it is presented in diagrams, charts, or videos.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-2', type: 'likert' as const, prompt: 'I prefer to use mind-maps, color-coded notes, or highlighting when studying.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-3', type: 'likert' as const, prompt: 'I can easily picture designs, layouts, or maps in my head.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-4', type: 'likert' as const, prompt: 'I pay more attention to slides, whiteboard drawings, or handouts than the teacher\'s verbal lectures.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-5', type: 'likert' as const, prompt: 'I prefer websites or study guides that feature plenty of pictures or infographics.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-6', type: 'likert' as const, prompt: 'I remember people\'s faces much better than I remember their names.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-7', type: 'likert' as const, prompt: 'I find flowcharts extremely helpful to understand how a complex system works.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { V: 3 } },
+  { id: 'q-learn-8', type: 'likert' as const, prompt: 'I learn best by listening to a teacher explain things rather than reading a textbook.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-9', type: 'likert' as const, prompt: 'I find it helpful to discuss ideas or debate topics out loud with classmates.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-10', type: 'likert' as const, prompt: 'I prefer audiobooks or podcasts over physical print books.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-11', type: 'likert' as const, prompt: 'I often read difficult paragraphs aloud to understand them better.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-12', type: 'likert' as const, prompt: 'I easily remember lyrics to songs, spoken quotes, or jokes I have heard.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-13', type: 'likert' as const, prompt: 'I prefer verbal instructions over reading a printed manual.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-14', type: 'likert' as const, prompt: 'I study well in study groups where we explain answers to each other verbally.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-15', type: 'likert' as const, prompt: 'I am highly distracted by background noises when trying to focus.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { A: 3 } },
+  { id: 'q-learn-16', type: 'likert' as const, prompt: 'I prefer writing out notes word-for-word to study for exams.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-17', type: 'likert' as const, prompt: 'I enjoy reading long textbook chapters, manuals, or articles to get information.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-18', type: 'likert' as const, prompt: 'I prefer multiple-choice or essay questions over matching diagrams.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-19', type: 'likert' as const, prompt: 'I keep detailed checklists, diaries, or schedules in writing.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-20', type: 'likert' as const, prompt: 'I like to read handouts or online text summaries of lectures.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-21', type: 'likert' as const, prompt: 'I prefer to search for answers in written FAQs, search bars, or books rather than asking someone.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-22', type: 'likert' as const, prompt: 'I feel more confident in my knowledge when I have written it down.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { R: 3 } },
+  { id: 'q-learn-23', type: 'likert' as const, prompt: 'I learn best when I can perform hands-on activities, experiments, or labs.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-24', type: 'likert' as const, prompt: 'I find it hard to sit still for long lectures without taking a break or moving around.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-25', type: 'likert' as const, prompt: 'I prefer to build, assemble, or physically test things to understand how they work.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-26', type: 'likert' as const, prompt: 'I learn a lot from real-world case studies, simulations, or field trips.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-27', type: 'likert' as const, prompt: 'I tend to use hand gestures or body language when explaining things to others.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-28', type: 'likert' as const, prompt: 'I learn sports, dances, or physical skills very quickly by practicing them.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-29', type: 'likert' as const, prompt: 'I enjoy workshops, interactive games, or role-playing exercises in class.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } },
+  { id: 'q-learn-30', type: 'likert' as const, prompt: 'I prefer trial-and-error practicing over reading instructions or listening to explanations.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { K: 3 } }
 ];

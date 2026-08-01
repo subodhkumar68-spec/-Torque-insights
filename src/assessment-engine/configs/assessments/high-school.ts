@@ -10,7 +10,7 @@ export const highSchoolConfig = {
   duration: 30,
   instructions: [
     'This test takes approximately 30 minutes to complete.',
-    'There are 25 questions assessing multiple cognitive dimensions.',
+    'There are 30 questions assessing multiple cognitive dimensions.',
     'Do not search for answers online; your first instinct is usually the most accurate.',
     'Make sure you are in a quiet room with a stable internet connection.'
   ],

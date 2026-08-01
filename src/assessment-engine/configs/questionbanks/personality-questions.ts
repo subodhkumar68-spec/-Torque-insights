@@ -1,26 +1,32 @@
 export const personalityQuestions = [
-  { id: 'q-pers-1', type: 'single' as const, prompt: 'After a demanding week, your preferred method to recharge is:', options: [
-    { value: 'E', label: 'Attending group parties or outgoing dinners with classmates/peers.', weights: { E: 3 } },
-    { value: 'I', label: 'Reading a book, watching videos, or resting alone in a quiet room.', weights: { I: 3 } }
-  ]},
-  { id: 'q-pers-2', type: 'single' as const, prompt: 'When reviewing a new subject, you naturally focus on:', options: [
-    { value: 'S', label: 'Tangible facts, actual examples, and concrete step-by-step methods.', weights: { S: 3 } },
-    { value: 'N', label: 'Theoretical structures, future patterns, and abstract concepts.', weights: { N: 3 } }
-  ]},
-  { id: 'q-pers-3', type: 'single' as const, prompt: 'In resolving an argument between team members, you prioritize:', options: [
-    { value: 'T', label: 'Objectivity, logical justice, and transparent parameters.', weights: { T: 3 } },
-    { value: 'F', label: 'Individual feelings, interpersonal harmony, and collaborative empathy.', weights: { F: 3 } }
-  ]},
-  { id: 'q-pers-4', type: 'single' as const, prompt: 'Your typical approach to tracking assignment milestones is:', options: [
-    { value: 'J', label: 'Writing a strict schedule with exact daily task targets.', weights: { J: 3 } },
-    { value: 'P', label: 'Adapting dynamically as guidelines and inputs change.', weights: { P: 3 } }
-  ]},
-  ...Array.from({ length: 21 }).map((_, i) => ({
-    id: `q-pers-gen-${i + 5}`,
-    type: 'likert' as const,
-    prompt: `[Personality Index #${i + 1}] I feel highly motivated when working independently on self-directed tasks without micro-management.`,
-    minLabel: 'Strongly Disagree',
-    maxLabel: 'Strongly Agree',
-    weights: { I: 2 }
-  }))
+  { id: 'q-pers-1', type: 'likert' as const, prompt: 'I feel energized after spending time with a large group of people.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { E: 3 } },
+  { id: 'q-pers-2', type: 'likert' as const, prompt: 'I prefer spending my weekends relaxing quietly at home rather than attending social gatherings.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { I: 3 } },
+  { id: 'q-pers-3', type: 'likert' as const, prompt: 'I am usually the one to start conversations with new classmates or colleagues.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { E: 3 } },
+  { id: 'q-pers-4', type: 'likert' as const, prompt: 'I find prolonged social interactions exhausting and need alone time to recharge.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { I: 3 } },
+  { id: 'q-pers-5', type: 'likert' as const, prompt: 'I enjoy being the center of attention in group settings or presentation panels.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { E: 3 } },
+  { id: 'q-pers-6', type: 'likert' as const, prompt: 'I prefer expressing my thoughts in writing rather than speaking about them in public.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { I: 3 } },
+  { id: 'q-pers-7', type: 'likert' as const, prompt: 'I actively seek out team activities, clubs, or group sports.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { E: 3 } },
+  { id: 'q-pers-8', type: 'likert' as const, prompt: 'I pay close attention to concrete facts and details rather than theoretical possibilities.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { S: 3 } },
+  { id: 'q-pers-9', type: 'likert' as const, prompt: 'I often find myself thinking about the future and what possibilities it holds.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { N: 3 } },
+  { id: 'q-pers-10', type: 'likert' as const, prompt: 'I prefer learning practical skills that have immediate real-world applications.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { S: 3 } },
+  { id: 'q-pers-11', type: 'likert' as const, prompt: 'I enjoy reading books, articles, or essays about abstract or philosophical ideas.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { N: 3 } },
+  { id: 'q-pers-12', type: 'likert' as const, prompt: 'I rely on past experience to guide my decisions rather than relying on creative hunches.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { S: 3 } },
+  { id: 'q-pers-13', type: 'likert' as const, prompt: 'I like to brainstorm original ideas and explore unconventional solutions to problems.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { N: 3 } },
+  { id: 'q-pers-14', type: 'likert' as const, prompt: 'I am more interested in the actual, current state of things rather than what they could become.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { S: 3 } },
+  { id: 'q-pers-15', type: 'likert' as const, prompt: 'I frequently use metaphors or analogies to explain my ideas to others.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { N: 3 } },
+  { id: 'q-pers-16', type: 'likert' as const, prompt: 'I make decisions based on logical analysis and objective facts rather than personal feelings.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { T: 3 } },
+  { id: 'q-pers-17', type: 'likert' as const, prompt: 'I prioritize empathy and maintaining harmony when resolving conflicts between friends.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { F: 3 } },
+  { id: 'q-pers-18', type: 'likert' as const, prompt: 'I believe it is more important to be honest and direct than to worry about hurting someone\'s feelings.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { T: 3 } },
+  { id: 'q-pers-19', type: 'likert' as const, prompt: 'I often make decisions based on my gut feelings or what feels right in my heart.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { F: 3 } },
+  { id: 'q-pers-20', type: 'likert' as const, prompt: 'I enjoy analyzing data, frameworks, or systems to see how they work.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { T: 3 } },
+  { id: 'q-pers-21', type: 'likert' as const, prompt: 'I am highly sensitive to the emotional atmosphere in a room or group.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { F: 3 } },
+  { id: 'q-pers-22', type: 'likert' as const, prompt: 'I value justice and fairness over mercy and individual circumstances.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { T: 3 } },
+  { id: 'q-pers-23', type: 'likert' as const, prompt: 'I prefer to have a detailed plan or schedule for my day-to-day activities.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { J: 3 } },
+  { id: 'q-pers-24', type: 'likert' as const, prompt: 'I feel comfortable adapting to unexpected changes and being spontaneous.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { P: 3 } },
+  { id: 'q-pers-25', type: 'likert' as const, prompt: 'I like to complete my assignments well before the deadline to avoid last-minute stress.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { J: 3 } },
+  { id: 'q-pers-26', type: 'likert' as const, prompt: 'I work best under pressure when deadlines are close, as it motivates me.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { P: 3 } },
+  { id: 'q-pers-27', type: 'likert' as const, prompt: 'I prefer to keep my options open rather than locking in plans early.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { P: 3 } },
+  { id: 'q-pers-28', type: 'likert' as const, prompt: 'I feel satisfied when I cross items off my to-do list or finish planned tasks.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { J: 3 } },
+  { id: 'q-pers-29', type: 'likert' as const, prompt: 'I keep my workspaces, folders, and documents organized and tidy.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { J: 3 } },
+  { id: 'q-pers-30', type: 'likert' as const, prompt: 'I enjoy starting new projects more than wrapping up old or completed ones.', minLabel: 'Disagree', maxLabel: 'Agree', weights: { P: 3 } }
 ];
