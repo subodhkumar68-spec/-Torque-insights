@@ -124,10 +124,10 @@ export const Home: React.FC = () => {
           </motion.div>
 
           {/* RIGHT COLUMN: Interactive Live Glassmorphic Dashboard Showcase */}
-          <div className="lg:col-span-6 relative flex justify-center items-center py-10 min-h-[620px]">
+          <div className="lg:col-span-6 relative flex justify-center lg:justify-end items-center py-10 min-h-[620px] lg:pr-8">
             
             {/* Dashboard Visual Frame */}
-            <div className="relative w-full max-w-[480px] bg-white/70 dark:bg-slate-900/60 border border-slate-200/50 dark:border-slate-800/60 rounded-[2rem] p-6 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.01]">
+            <div className="relative w-full max-w-[450px] bg-white/70 dark:bg-slate-900/60 border border-slate-200/50 dark:border-slate-800/60 rounded-[2rem] p-6 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.01]">
               
               {/* Profile Card Header */}
               <div className="flex justify-between items-start border-b border-slate-200/40 dark:border-slate-800/40 pb-4">
@@ -152,7 +152,7 @@ export const Home: React.FC = () => {
                 {/* Embedded dynamic Radar chart */}
                 <div className="h-44 w-full flex items-center justify-center bg-transparent">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="68%" data={radarData}>
                       <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
                       <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 8, fontWeight: 'bold' }} />
                       <Radar name="Candidate" dataKey="score" stroke="#00A8A8" fill="#00A8A8" fillOpacity={0.25} />
@@ -222,7 +222,7 @@ export const Home: React.FC = () => {
             <motion.div 
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              className="absolute -top-4 -right-8 w-36 rounded-2xl border border-slate-200/50 bg-white/95 dark:bg-slate-900/95 p-3 shadow-xl backdrop-blur-md z-20 text-left"
+              className="absolute -top-4 -right-2 w-36 rounded-2xl border border-slate-200/50 bg-white/95 dark:bg-slate-900/95 p-3 shadow-xl backdrop-blur-md z-20 text-left"
             >
               <p className="text-[8px] font-black text-[#0F4C81] dark:text-[#38BDF8] uppercase tracking-widest leading-none">Diagnostic Fit</p>
               <h4 className="text-xs font-black text-slate-900 dark:text-white mt-1.5 leading-none">Stanford Global</h4>
