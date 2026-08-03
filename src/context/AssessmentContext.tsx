@@ -4,6 +4,7 @@ import { AssessmentRegistry } from '../assessment-engine/engine/AssessmentRegist
 import { QuestionLoader } from '../assessment-engine/engine/QuestionLoader';
 import { ReportGenerator } from '../assessment-engine/engine/ReportGenerator';
 import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface AssessmentContextType {
   activeSession: AssessmentSession | null;
@@ -146,6 +147,35 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const filteredSessions = sessions.filter(s => !(s.userId === activeUser.id && !s.submitted));
     dbService.saveSessions([...filteredSessions, newSession]);
 
+    const isUuid = (str: string) => {
+      const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return regex.test(str);
+    };
+
+    const syncSessionToSupabase = async (session: AssessmentSession) => {
+      try {
+        const payload = {
+          id: session.id,
+          user_id: isUuid(session.userId) ? session.userId : null,
+          guest_id: !isUuid(session.userId) ? session.userId : null,
+          category: session.category,
+          sub_category: session.subCategory,
+          start_time: new Date(session.startTime).toISOString(),
+          duration_ms: session.durationMs,
+          answers: session.answers,
+          submitted: session.submitted,
+          completed_at: session.completedAt ? new Date(session.completedAt).toISOString() : null,
+          report_id: session.reportId || null
+        };
+        await supabase
+          .from('assessment_sessions')
+          .upsert([payload]);
+      } catch (err) {
+        console.warn('Supabase sessions synchronization skipped:', err);
+      }
+    };
+    syncSessionToSupabase(newSession);
+
     setActiveSession(newSession);
     setTimeLeft((config.duration || 30) * 60);
     setCurrentQuestionIndex(0);
@@ -170,6 +200,35 @@ export const AssessmentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (idx !== -1) {
       sessions[idx] = updatedSession;
       dbService.saveSessions(sessions);
+
+      const isUuid = (str: string) => {
+        const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        return regex.test(str);
+      };
+
+      const syncSessionToSupabase = async (session: AssessmentSession) => {
+        try {
+          const payload = {
+            id: session.id,
+            user_id: isUuid(session.userId) ? session.userId : null,
+            guest_id: !isUuid(session.userId) ? session.userId : null,
+            category: session.category,
+            sub_category: session.subCategory,
+            start_time: new Date(session.startTime).toISOString(),
+            duration_ms: session.durationMs,
+            answers: session.answers,
+            submitted: session.submitted,
+            completed_at: session.completedAt ? new Date(session.completedAt).toISOString() : null,
+            report_id: session.reportId || null
+          };
+          await supabase
+            .from('assessment_sessions')
+            .upsert([payload]);
+        } catch (err) {
+          console.warn('Supabase sessions synchronization skipped:', err);
+        }
+      };
+      syncSessionToSupabase(updatedSession);
     }
   };
 

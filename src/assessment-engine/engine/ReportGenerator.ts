@@ -1,6 +1,7 @@
 import { AssessmentConfig } from './AssessmentRegistry';
 import { AssessmentScoring } from './AssessmentScoring';
 import { CareerDNAReport, dbService } from '../../services/dbService';
+import { supabase } from '../../lib/supabase';
 
 export const ReportGenerator = {
   generateReport: (
@@ -348,10 +349,55 @@ export const ReportGenerator = {
       createdAt: Date.now()
     };
 
-    // Save report in db
+     // Save report in db
     const reports = dbService.getReports();
     reports.push(newReport);
     dbService.saveReports(reports);
+
+    const isUuid = (str: string) => {
+      const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return regex.test(str);
+    };
+
+    const syncReportToSupabase = async () => {
+      try {
+        const payload = {
+          id: newReport.id,
+          user_id: isUuid(newReport.userId) ? newReport.userId : null,
+          guest_id: !isUuid(newReport.userId) ? newReport.userId : null,
+          category: newReport.category,
+          sub_category: newReport.subCategory,
+          submitted_at: new Date(newReport.submittedAt).toISOString(),
+          scores: newReport.scores,
+          strengths: newReport.strengths,
+          weaknesses: newReport.weaknesses,
+          growth_areas: newReport.growthAreas,
+          career_recommendations: newReport.careerRecommendations,
+          suggested_degrees: newReport.suggestedDegrees,
+          suggested_certifications: newReport.suggestedCertifications,
+          suggested_colleges: newReport.suggestedColleges,
+          skill_gap_analysis: newReport.skillGapAnalysis,
+          learning_roadmap: newReport.learningRoadmap,
+          assessment_id: newReport.assessmentId,
+          assessment_name: newReport.assessmentName,
+          candidate_name: newReport.candidateName,
+          email: newReport.email,
+          mobile: newReport.mobile,
+          school: newReport.school,
+          class: newReport.class,
+          city: newReport.city,
+          answers: newReport.answers,
+          created_at: new Date(newReport.createdAt || Date.now()).toISOString()
+        };
+        const { error } = await supabase
+          .from('reports')
+          .insert([payload]);
+        if (error) console.warn('Supabase reports insert error:', error);
+      } catch (err) {
+        console.warn('Supabase reports synchronization skipped:', err);
+      }
+    };
+    syncReportToSupabase();
 
     // Update assessment session mapping
     const sessions = dbService.getSessions();
@@ -361,6 +407,31 @@ export const ReportGenerator = {
       activeSession.completedAt = Date.now();
       activeSession.reportId = newReport.id;
       dbService.saveSessions(sessions);
+
+      const syncCompletedSessionToSupabase = async (session: any) => {
+        try {
+          const payload = {
+            id: session.id,
+            user_id: isUuid(session.userId) ? session.userId : null,
+            guest_id: !isUuid(session.userId) ? session.userId : null,
+            category: session.category,
+            sub_category: session.subCategory,
+            start_time: new Date(session.startTime).toISOString(),
+            duration_ms: session.durationMs,
+            answers: session.answers,
+            submitted: true,
+            completed_at: new Date().toISOString(),
+            report_id: newReport.id
+          };
+          const { error } = await supabase
+            .from('assessment_sessions')
+            .upsert([payload]);
+          if (error) console.warn('Supabase sessions complete update error:', error);
+        } catch (err) {
+          console.warn('Supabase sessions complete synchronization skipped:', err);
+        }
+      };
+      syncCompletedSessionToSupabase(activeSession);
     }
 
     return newReport;
