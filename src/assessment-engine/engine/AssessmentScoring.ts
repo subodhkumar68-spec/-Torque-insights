@@ -169,92 +169,137 @@ export const AssessmentScoring = {
       };
     }
     
-    // Initialize dimension scores
-    const dimensions: Record<string, number> = {};
-    
-    // Setup standard defaults
-    const defaultDims = ['problemSolving', 'criticalThinking', 'communicationScore', 'leadershipScore', 'emotionalIntelligence', 'decisionMaking'];
-    const activeDims = model?.dimensions && model.dimensions.length > 0 ? model.dimensions : defaultDims;
-    
-    activeDims.forEach(dim => {
-      dimensions[dim] = 75; // default baseline benchmark
+    // 1. Get competencies for config ID
+    const getCompetenciesForConfig = (configId: string): string[] => {
+      const id = configId.toLowerCase();
+      if (id.includes('high-school') || id.includes('aptitude') || id.includes('career')) {
+        return ['analyticalAbility', 'numericalAbility', 'logicalReasoning', 'spatialIntelligence', 'problemSolving'];
+      }
+      if (id.includes('personality')) {
+        return ['introversion', 'extroversion', 'leadership', 'emotionalStability', 'adaptability'];
+      }
+      if (id.includes('communication')) {
+        return ['grammar', 'vocabulary', 'businessWriting', 'publicSpeaking', 'listening'];
+      }
+      if (id.includes('engineering')) {
+        return ['mathematics', 'physics', 'logicalThinking', 'technologyInterest', 'innovation'];
+      }
+      if (id.includes('medical')) {
+        return ['biology', 'observation', 'empathy', 'scientificThinking', 'patience'];
+      }
+      if (id.includes('commerce')) {
+        return ['businessAptitude', 'financialLiteracy', 'quantitativeSkills', 'decisionMaking', 'entrepreneurship'];
+      }
+      if (id.includes('management')) {
+        return ['leadership', 'teamwork', 'strategy', 'communication', 'decisionMaking'];
+      }
+      // Fallback
+      return ['analyticalAbility', 'problemSolving', 'communication', 'leadership', 'decisionMaking'];
+    };
+
+    const compKeys = getCompetenciesForConfig(config.id);
+
+    // Initialize accumulators
+    const accumulators: Record<string, { earned: number; max: number }> = {};
+    compKeys.forEach(k => {
+      accumulators[k] = { earned: 0, max: 0 };
     });
 
-    // Likert summation counters
-    let totalScoreSum = 0;
-    let answeredCount = 0;
-    
-    // Holland RIASEC trait counters
-    const riasec: Record<string, number> = { R: 60, I: 75, A: 65, S: 70, E: 80, C: 65 };
-    
-    // MBTI preference counters
-    const mbtiCounts = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-    
-    // VARK preference counters
-    const vark: Record<string, number> = { V: 40, A: 20, R: 25, K: 15 };
+    // Helper to find matching competency key
+    const findMatchingCompetency = (q: any, idx: number): string => {
+      const textToSearch = `${q.id} ${q.category || ''} ${q.prompt || ''} ${JSON.stringify(q.weights || {})}`.toLowerCase();
+      for (const key of compKeys) {
+        // Match key substrings (e.g. 'math' inside mathematics)
+        const partial = key.toLowerCase().substring(0, 5);
+        if (textToSearch.includes(partial)) {
+          return key;
+        }
+      }
+      // Modulo distribute
+      return compKeys[idx % compKeys.length];
+    };
 
-    questions.forEach(q => {
+    let answeredCount = 0;
+
+    questions.forEach((q, idx) => {
       const answerVal = answers[q.id];
       if (answerVal === undefined || answerVal === null || answerVal === '') return;
-      
+
       answeredCount++;
+      const targetComp = findMatchingCompetency(q, idx);
 
-      // 1. Process Likert scale (1-5 value)
+      // Determine option selected value (1 to 5)
+      let selectedOptionVal = 3; // default neutral
+      
       if (q.type === 'likert') {
-        const val = Number(answerVal); // 1 to 5
-        const percentage = (val - 1) * 25; // Scale 1-5 to 0-100
-        totalScoreSum += percentage;
-
-        // Apply weights if defined
-        if (q.weights) {
-          Object.keys(q.weights).forEach(wKey => {
-            const weight = q.weights[wKey];
-            if (wKey in riasec) {
-              riasec[wKey] = Math.min(100, Math.max(0, riasec[wKey] + (val - 3) * weight * 4));
-            }
-            if (wKey in dimensions) {
-              dimensions[wKey] = Math.min(100, Math.max(0, dimensions[wKey] + (val - 3) * weight * 5));
-            }
-          });
+        const val = Number(answerVal);
+        if (!isNaN(val)) {
+          selectedOptionVal = Math.max(1, Math.min(5, val));
         }
-      } 
-      // 2. Process Choice based Questions
-      else if (q.type === 'single' || q.type === 'multiple' || q.type === 'scenario') {
-        const values = Array.isArray(answerVal) ? answerVal : [answerVal];
-        values.forEach(v => {
-          const opt = q.options?.find((o: any) => o.value === v);
-          if (opt?.weights) {
-            Object.keys(opt.weights).forEach(wKey => {
-              const weight = opt.weights[wKey];
-              if (wKey in mbtiCounts) {
-                mbtiCounts[wKey as keyof typeof mbtiCounts] += weight;
-              }
-              if (wKey in vark) {
-                vark[wKey] = Math.min(100, vark[wKey] + weight * 20);
-              }
-              if (wKey in dimensions) {
-                dimensions[wKey] = Math.min(100, dimensions[wKey] + weight * 15);
-              }
-            });
+      } else {
+        // Single choice or scenario questions
+        if (q.correctAnswer !== undefined) {
+          selectedOptionVal = (answerVal === q.correctAnswer) ? 5 : 1;
+        } else if (q.options && Array.isArray(q.options)) {
+          const optIdx = q.options.findIndex((o: any) => o.value === answerVal);
+          if (optIdx !== -1) {
+            selectedOptionVal = Math.min(5, optIdx + 1);
+          } else {
+            const charCode = String(answerVal).toLowerCase().charCodeAt(0);
+            if (charCode >= 97 && charCode <= 101) { // 'a' to 'e'
+              selectedOptionVal = charCode - 96;
+            }
           }
-        });
+        }
       }
+
+      // Check if question has weights to scale importance
+      let weight = 1;
+      if (q.weights && typeof q.weights === 'object') {
+        weight = q.weights[targetComp] || q.weights[Object.keys(q.weights)[0]] || 1;
+      }
+
+      accumulators[targetComp].earned += selectedOptionVal * weight;
+      accumulators[targetComp].max += 5 * weight;
     });
 
-    // Compute MBTI code
+    // Calculate normalized dimension percentages (30% to 100%)
+    const dimensions: Record<string, number> = {};
+    let overallSum = 0;
+    compKeys.forEach(k => {
+      const acc = accumulators[k];
+      const score = acc.max > 0 ? Math.round((acc.earned / acc.max) * 100) : 75;
+      dimensions[k] = Math.max(30, Math.min(100, score));
+      overallSum += dimensions[k];
+    });
+
+    const overallScore = compKeys.length > 0 ? Math.round(overallSum / compKeys.length) : 75;
+
+    // Holland RIASEC traits
+    const riasec: Record<string, number> = {
+      R: Math.round((dimensions[compKeys[0]] || 70) * 0.9),
+      I: Math.round((dimensions[compKeys[1] || compKeys[0]] || 75) * 0.95),
+      A: Math.round((dimensions[compKeys[2] || compKeys[0]] || 65) * 0.85),
+      S: Math.round((dimensions[compKeys[3] || compKeys[0]] || 70) * 0.9),
+      E: Math.round((dimensions[compKeys[4] || compKeys[0]] || 80) * 0.92),
+      C: Math.round((dimensions[compKeys[1] || compKeys[0]] || 65) * 0.88)
+    };
+
+    // MBTI traits
+    const isHigh = (k: string) => (dimensions[k] || 70) >= 70;
     const mbtiCode = 
-      (mbtiCounts.E >= mbtiCounts.I ? 'E' : 'I') +
-      (mbtiCounts.S >= mbtiCounts.N ? 'S' : 'N') +
-      (mbtiCounts.T >= mbtiCounts.F ? 'T' : 'F') +
-      (mbtiCounts.J >= mbtiCounts.P ? 'J' : 'P');
+      (isHigh(compKeys[4] || '') ? 'E' : 'I') +
+      (isHigh(compKeys[3] || '') ? 'N' : 'S') +
+      (isHigh(compKeys[0] || '') ? 'T' : 'F') +
+      (isHigh(compKeys[2] || '') ? 'J' : 'P');
 
-    // Compute overall score
-    const overallScore = answeredCount > 0 ? Math.round(totalScoreSum / answeredCount) : 88;
-
-    // Normalizations
-    Object.keys(dimensions).forEach(k => {
-      dimensions[k] = Math.max(30, Math.min(100, Math.round(dimensions[k])));
-    });
+    // VARK preferences
+    const vark: Record<string, number> = {
+      V: Math.round((dimensions[compKeys[0]] || 70) * 0.8),
+      A: Math.round((dimensions[compKeys[1] || compKeys[0]] || 75) * 0.85),
+      R: Math.round((dimensions[compKeys[2] || compKeys[0]] || 65) * 0.75),
+      K: Math.round((dimensions[compKeys[3] || compKeys[0]] || 70) * 0.9)
+    };
 
     return {
       dimensions,

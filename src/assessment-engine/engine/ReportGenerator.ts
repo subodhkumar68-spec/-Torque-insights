@@ -161,103 +161,135 @@ export const ReportGenerator = {
     let weaknesses = specContent.weaknesses;
     let growthAreas = specContent.growthAreas;
 
-    if (config.id === 'ast-ipmat') {
-      const sortedDims = [
-        { name: 'Quantitative Aptitude', score: scores.dimensions.quantitativeAptitude || 0 },
-        { name: 'Higher Mathematics', score: scores.dimensions.higherMathematics || 0 },
-        { name: 'Logical Reasoning', score: scores.dimensions.logicalReasoning || 0 },
-        { name: 'Verbal Ability', score: scores.dimensions.verbalAbility || 0 }
-      ].sort((a, b) => b.score - a.score);
+    // Format all dimension keys into reader-friendly labels
+    const sortedDims = Object.keys(scores.dimensions).map(key => {
+      const readableName = key
+        .replace(/Score|Index|Intelligence/g, '')
+        .replace(/([A-Z])/g, ' $1') // insert space before capital letters
+        .replace(/^./, str => str.toUpperCase()) // capitalize first letter
+        .trim();
+      return {
+        key,
+        name: readableName,
+        score: scores.dimensions[key] || 0
+      };
+    }).sort((a, b) => b.score - a.score);
+
+    if (sortedDims.length >= 2) {
+      const highest1 = sortedDims[sortedDims.length - 1];
+      const highest2 = sortedDims[sortedDims.length - 2];
+      const lowest1 = sortedDims[0];
+      const lowest2 = sortedDims[1];
 
       strengths = [
-        `Strong performance in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
-        `Demonstrates competitive aptitude in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
+        `Exhibits advanced competency in ${highest1.name} (Score: ${highest1.score}%), demonstrating strong capability.`,
+        `Solid execution profiles in ${highest2.name} (Score: ${highest2.score}%), supporting strategic growth.`
       ];
 
       weaknesses = [
-        `Needs improvement in ${sortedDims[3].name} (Score: ${sortedDims[3].score}%)`,
-        `Optimize question pacing and deduction accuracy in ${sortedDims[2].name} (Score: ${sortedDims[2].score}%)`
+        `Pacing or precision gaps observed in ${lowest1.name} (Score: ${lowest1.score}%), requiring dedicated study.`,
+        `Needs focused optimization in ${lowest2.name} (Score: ${lowest2.score}%) to elevate baseline benchmarks.`
       ];
 
       growthAreas = [
-        `Focus on refining topics in ${sortedDims[3].name} via daily mock practices.`,
-        `Practice solving higher-difficulty logic puzzles under strict timed constraints.`
+        `Engage in targeted exercises for ${lowest1.name} to reinforce core structures.`,
+        `Allocate weekly study cycles to optimize performance in ${lowest2.name} modules.`
       ];
     }
 
-    if (config.id === 'ast-cuet') {
-      const sortedDims = [
-        { name: 'Language Proficiency', score: scores.dimensions.language || 0 },
-        { name: 'General Aptitude', score: scores.dimensions.generalAptitude || 0 },
-        { name: 'Domain Readiness', score: scores.dimensions.domainReadiness || 0 },
-        { name: 'Academic Skills', score: scores.dimensions.academicReadiness || 0 }
-      ].sort((a, b) => b.score - a.score);
+    const getDynamicCareers = () => {
+      const topDimKey = sortedDims[sortedDims.length - 1]?.key || '';
+      const secondDimKey = sortedDims[sortedDims.length - 2]?.key || '';
+      
+      const key1 = topDimKey.toLowerCase();
+      const key2 = secondDimKey.toLowerCase();
+      
+      const resolveCareers = (k: string) => {
+        if (k.includes('analytic') || k.includes('math') || k.includes('logic') || k.includes('physics') || k.includes('scientific') || k.includes('techno') || k.includes('innovat')) {
+          return ['Data Analytics Architect', 'AI/ML Research Scientist', 'Quantitative Analyst'];
+        }
+        if (k.includes('business') || k.includes('financial') || k.includes('finance') || k.includes('quant') || k.includes('strategy') || k.includes('market')) {
+          return ['Investment Banker', 'Product Strategy Lead', 'Venture Capital Associate'];
+        }
+        if (k.includes('biology') || k.includes('patience') || k.includes('empathy') || k.includes('observation')) {
+          return ['Clinical Surgeon', 'Biomedical Researcher', 'Healthcare Consultant'];
+        }
+        if (k.includes('leader') || k.includes('adapt') || k.includes('emotional') || k.includes('teamwork')) {
+          return ['Management Specialist', 'Startup Founder', 'Human Resource Director'];
+        }
+        if (k.includes('grammar') || k.includes('voc') || k.includes('writing') || k.includes('speaking') || k.includes('communication') || k.includes('verbal')) {
+          return ['Corporate Communications Director', 'Brand PR Strategist', 'Public Policy Analyst'];
+        }
+        return ['Consulting Principal', 'Operations Lead', 'Client Relationship Manager'];
+      };
 
-      strengths = [
-        `Highly competitive in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
-        `Solid foundations in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
-      ];
+      const primaryList = resolveCareers(key1);
+      const secondaryList = resolveCareers(key2);
 
-      weaknesses = [
-        `Improve capabilities in ${sortedDims[3].name} (Score: ${sortedDims[3].score}%)`,
-        `Refine focus and timed practice in ${sortedDims[2].name} (Score: ${sortedDims[2].score}%)`
-      ];
+      const uniqueCareers = Array.from(new Set([...primaryList, ...secondaryList])).slice(0, 3);
+      return uniqueCareers.map((c, i) => ({
+        career: c,
+        matchPercentage: scores.overallScore - i * 4,
+        description: `Targeting growth trajectories in professional ${c.toLowerCase()} ecosystems based on your competency profile.`
+      }));
+    };
 
-      growthAreas = [
-        `Target concepts in ${sortedDims[3].name} via structured daily revisions.`,
-        `Improve mock pacing and strategies for ${sortedDims[2].name} sections.`
-      ];
-    }
-    if (config.id === 'future-communication') {
-      const sortedDims = [
-        { name: 'Verbal Communication', score: scores.dimensions.verbal || 0 },
-        { name: 'Written Communication', score: scores.dimensions.written || 0 },
-        { name: 'Business Communication', score: scores.dimensions.business || 0 },
-        { name: 'Interpersonal Skills', score: scores.dimensions.interpersonal || 0 },
-        { name: 'Presentation Skills', score: scores.dimensions.presentation || 0 },
-        { name: 'Interview Skills', score: scores.dimensions.interview || 0 }
-      ].sort((a, b) => b.score - a.score);
+    const careerRecommendations = getDynamicCareers();
 
-      strengths = [
-        `Excellent articulation in ${sortedDims[0].name} (Score: ${sortedDims[0].score}%)`,
-        `Highly effective in ${sortedDims[1].name} (Score: ${sortedDims[1].score}%)`
-      ];
-
-      weaknesses = [
-        `Refine execution parameters in ${sortedDims[5].name} (Score: ${sortedDims[5].score}%)`,
-        `Enhance active habits in ${sortedDims[4].name} (Score: ${sortedDims[4].score}%)`
-      ];
-
-      growthAreas = [
-        `Enroll in advanced training workshops targeting ${sortedDims[5].name}.`,
-        `Practice mock presentation cycles under structured peer reviews to lift ${sortedDims[4].name}.`
-      ];
-    }
-
-    const careerRecommendations = config.recommendedCareers?.map((c, i) => ({
-      career: c,
-      matchPercentage: scores.overallScore - i * 4,
-      description: `Targeting growth trajectories in professional ${c.toLowerCase()} ecosystems.`
-    })) || [];
-
-    const skillGapAnalysis = config.scoringModel?.dimensions.map((dim, idx) => ({
+    const skillGapAnalysis = Object.keys(scores.dimensions).map((dim, idx) => ({
       skill: dim.replace(/Score|Index|Intelligence/g, '').replace(/([A-Z])/g, ' $1').trim(),
       current: scores.dimensions[dim] || 75,
       required: 90
     })) || [];
 
+    const getSuggestedCourses = () => {
+      if (config.id === 'ast-cuet') {
+        const stream = answers.selectedStream || 'science';
+        if (stream === 'science') {
+          return ['B.Sc. Physics (Honours)', 'B.Sc. Computer Science', 'B.Tech / B.Sc. Mathematics'];
+        } else if (stream === 'commerce') {
+          return ['B.Com. (Honours)', 'B.A. Economics (Honours)', 'BBA in Business Analytics'];
+        } else {
+          return ['B.A. Political Science (Honours)', 'B.A. History (Honours)', 'B.A. Psychology & Sociology'];
+        }
+      }
+
+      const topDimKey = sortedDims[sortedDims.length - 1]?.key || '';
+      const key = topDimKey.toLowerCase();
+      
+      if (key.includes('analytic') || key.includes('math') || key.includes('logic') || key.includes('physics') || key.includes('scientific') || key.includes('techno') || key.includes('innovat')) {
+        return ['B.Tech Computer Science & AI', 'B.Sc. Mathematics & Computing', 'M.Sc. Data Science'];
+      }
+      if (key.includes('business') || key.includes('financial') || key.includes('finance') || key.includes('quant') || key.includes('strategy') || key.includes('market')) {
+        return ['B.Com (Honours) / BBA Finance', 'Chartered Financial Analyst (CFA) Prep', 'MBA in Strategic Management'];
+      }
+      if (key.includes('biology') || key.includes('patience') || key.includes('empathy') || key.includes('observation')) {
+        return ['MBBS / Pre-Med Specialization', 'B.Sc. Biomedical Sciences', 'M.Sc. Clinical Psychology'];
+      }
+      if (key.includes('leader') || key.includes('adapt') || key.includes('emotional') || key.includes('teamwork')) {
+        return ['MBA Leadership & Change Management', 'Executive Leadership Certification', 'BBA in Human Resource Strategy'];
+      }
+      return config.recommendedCourses || ['Bachelor of Business Administration', 'Bachelor of Arts (Honours)', 'Executive Development Diploma'];
+    };
+
     const learningRoadmap = [
       {
-        phase: 'Phase 1',
-        title: 'Foundational Knowledge & Skills',
-        duration: '3 Months',
-        details: config.recommendedCourses?.map(c => `Explore core modules in ${c}`) || ['Study base disciplines']
+        phase: 'Phase 1 (1-2 Months)',
+        title: `Bridge Gaps in ${sortedDims[0]?.name || 'Core Skills'}`,
+        duration: '8 Weeks',
+        details: [
+          `Enroll in introductory programs and focused learning pathways targeting ${sortedDims[0]?.name || 'the lowest scoring dimension'}.`,
+          `Implement a systematic review of basic structures and trace daily practice logs.`
+        ]
       },
       {
-        phase: 'Phase 2',
-        title: 'Advanced Diagnostic Certs',
-        duration: '6 Months',
-        details: [`Obtain credentials for Top Integrated BBA/MBA programs`, `Build interactive case studies`]
+        phase: 'Phase 2 (3-6 Months)',
+        title: `Leverage Strengths in ${sortedDims[sortedDims.length - 1]?.name || 'Advanced Modules'}`,
+        duration: '16 Weeks',
+        details: [
+          `Apply advanced methodologies in ${sortedDims[sortedDims.length - 1]?.name || 'highest scoring dimension'} to mock client case studies.`,
+          `Attempt premium certifications like ${getSuggestedCourses()[0]} to validate capability.`
+        ]
       }
     ];
 
@@ -280,30 +312,54 @@ export const ReportGenerator = {
           return ['Subject Foundation Program', 'Bridge Learning Course', 'Subject Strengthening Plan'];
         }
       }
-      if (config.id === 'future-communication') {
-        if (scores.overallScore >= 75) {
-          return ['Corporate Executive Coaching', 'Advanced Leadership Masterclass', 'Global Networking Seminars'];
-        } else if (scores.overallScore >= 40) {
-          return ['Public Speaking Practice Circles', 'Business Writing Bootcamps', 'Corporate Etiquette Workshops'];
-        } else {
-          return ['Vocabulary Improvement Program', 'Basic Grammar & Syntax Strengthening', 'Interpersonal Listening Foundations'];
-        }
-      }
-      return ['Tier 1 Universities', 'Symbiosis Pune', 'BITS Pilani'];
-    };
 
-    const getSuggestedCourses = () => {
-      if (config.id === 'ast-cuet') {
-        const stream = answers.selectedStream || 'science';
-        if (stream === 'science') {
-          return ['B.Sc. Physics (Honours)', 'B.Sc. Computer Science', 'B.Tech / B.Sc. Mathematics'];
-        } else if (stream === 'commerce') {
-          return ['B.Com. (Honours)', 'B.A. Economics (Honours)', 'BBA in Business Analytics'];
+      const topDimKey = sortedDims[sortedDims.length - 1]?.key || '';
+      const key = topDimKey.toLowerCase();
+      
+      if (key.includes('analytic') || key.includes('math') || key.includes('logic') || key.includes('physics') || key.includes('scientific') || key.includes('techno') || key.includes('innovat')) {
+        if (scores.overallScore >= 75) {
+          return ['MIT', 'Stanford University', 'IIT Delhi', 'BITS Pilani'];
+        } else if (scores.overallScore >= 40) {
+          return ['Delhi Technological University', 'VIT Vellore', 'Manipal Institute of Technology'];
         } else {
-          return ['B.A. Political Science (Honours)', 'B.A. History (Honours)', 'B.A. Psychology & Sociology'];
+          return ['STEM Foundation Bridge Program', 'Engineering Basic Coding Bootcamp'];
         }
       }
-      return config.recommendedCourses || [];
+      
+      if (key.includes('business') || key.includes('financial') || key.includes('finance') || key.includes('quant') || key.includes('strategy') || key.includes('market')) {
+        if (scores.overallScore >= 75) {
+          return ['Wharton School', 'London School of Economics', 'IIM Ahmedabad', 'SRCC Delhi'];
+        } else if (scores.overallScore >= 40) {
+          return ['NMIMS Mumbai', 'Symbiosis Pune', 'Christ University Bangalore'];
+        } else {
+          return ['Finance for Non-Finance Managers', 'Basic Accounting & Economics Course'];
+        }
+      }
+
+      if (key.includes('biology') || key.includes('patience') || key.includes('empathy') || key.includes('observation')) {
+        if (scores.overallScore >= 75) {
+          return ['Johns Hopkins University', 'AIIMS New Delhi', 'Oxford Medical School', 'Harvard Medical School'];
+        } else if (scores.overallScore >= 40) {
+          return ['KMC Manipal', 'JIPMER Pondicherry', 'D.Y. Patil Medical College'];
+        } else {
+          return ['Pre-Med Preparation Course', 'Empathy & Communication in Patient Care'];
+        }
+      }
+
+      if (key.includes('leader') || key.includes('adapt') || key.includes('emotional') || key.includes('teamwork')) {
+        if (scores.overallScore >= 75) {
+          return ['Harvard Business School', 'INSEAD France', 'ISB Hyderabad', 'IIM Bangalore'];
+        } else if (scores.overallScore >= 40) {
+          return ['SPJIMR Mumbai', 'MDI Gurgaon', 'IMT Ghaziabad'];
+        } else {
+          return ['Executive Leadership Development Program', 'Conflict Management Certification'];
+        }
+      }
+
+      if (scores.overallScore >= 75) {
+        return ['Oxford University', 'Cambridge University', 'Delhi University', 'Central Universities'];
+      }
+      return ['State Universities accepting scores', 'Top Private Universities', 'Local Study Circles'];
     };
 
     // 3. Compile report object with rich schema properties
